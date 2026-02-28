@@ -1,18 +1,55 @@
 import { useState } from 'react'
 import { ChevronLeft, Save } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Button, Input, Alert } from '../components/ui'
+import { createDossier } from '../api/dossiers'
 
 export default function NouveauDossier() {
-  const [form, setForm] = useState({ nom: '', prenom: '', type: '', reference: '' })
+  const navigate = useNavigate()
+  const [form, setForm] = useState({ 
+    demandeur: '', 
+    contact: '', 
+    region: '', 
+    prefecture: '', 
+    sous_prefecture: '', 
+    village: '', 
+    departement: '',
+    numero_demande: '',
+    date_enregistrement: new Date().toISOString().slice(0, 10)
+  })
   const [saved, setSaved] = useState(false)
+  const [error, setError] = useState('')
+  const [saving, setSaving] = useState(false)
 
-  const handleChange = e => setForm(f => ({ ...f, [e.target.name]: e.target.value }))
+  const handleChange = e => {
+    setForm(f => ({ ...f, [e.target.name]: e.target.value }))
+    setError('')
+  }
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault()
-    setSaved(true)
-    setTimeout(() => setSaved(false), 3000)
+    setSaving(true)
+    setError('')
+    
+    try {
+      await createDossier({
+        numero: form.numero_demande || `DOS-${new Date().getFullYear()}-${Math.floor(Math.random() * 10000)}`,
+        demandeur: form.demandeur,
+        contact: form.contact,
+        date_enregistrement: form.date_enregistrement,
+        region: form.region,
+        prefecture: form.prefecture,
+        sous_prefecture: form.sous_prefecture,
+        village: form.village,
+        numero_cf: form.departement
+      })
+      setSaved(true)
+      setTimeout(() => navigate('/dossiers'), 2000)
+    } catch (err) {
+      setError(err.response?.data?.detail || 'Erreur lors de la création du dossier')
+    } finally {
+      setSaving(false)
+    }
   }
 
   return (
@@ -34,7 +71,13 @@ export default function NouveauDossier() {
 
       {saved && (
         <Alert variant="success" className="mb-6">
-          Dossier créé avec succès !
+          Dossier créé avec succès ! Redirection en cours...
+        </Alert>
+      )}
+
+      {error && (
+        <Alert variant="error" className="mb-6">
+          {error}
         </Alert>
       )}
 
@@ -42,57 +85,97 @@ export default function NouveauDossier() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <Input
-            label="Nom"
-            name="nom"
+            label="Nom du demandeur"
+            name="demandeur"
             required
-            placeholder="ex : Kouassi"
-            value={form.nom}
+            placeholder="ex : Kouassi Emmanuel"
+            value={form.demandeur}
             onChange={handleChange}
           />
           <Input
-            label="Prénom"
-            name="prenom"
+            label="Contact"
+            name="contact"
             required
-            placeholder="ex : Emmanuel"
-            value={form.prenom}
+            placeholder="ex : +225 07 12 34 56 78"
+            value={form.contact}
             onChange={handleChange}
           />
         </div>
 
-        <div>
-          <label className="text-[0.78rem] font-bold text-neutral-700 block mb-1">
-            Type de dossier <span style={{ color: 'var(--ci-orange)' }}>*</span>
-          </label>
-          <select
-            name="type"
-            value={form.type}
-            onChange={handleChange}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <Input
+            label="Région"
+            name="region"
             required
-            className="input-field"
-          >
-            <option value="">Sélectionner un type…</option>
-            <option value="SPFEI">SPFEI</option>
-            <option value="SCVAA">SCVAA</option>
-            <option value="COURRIER">Courrier</option>
-          </select>
+            placeholder="ex : Lagunes"
+            value={form.region}
+            onChange={handleChange}
+          />
+          <Input
+            label="Préfecture"
+            name="prefecture"
+            placeholder="ex : Abidjan"
+            value={form.prefecture}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <Input
+            label="Sous-préfecture"
+            name="sous_prefecture"
+            placeholder="ex : Cocody"
+            value={form.sous_prefecture}
+            onChange={handleChange}
+          />
+          <Input
+            label="Village"
+            name="village"
+            placeholder="ex : Riviera"
+            value={form.village}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <Input
+            label="Département"
+            name="departement"
+            placeholder="ex : Abidjan 1"
+            value={form.departement}
+            onChange={handleChange}
+          />
+          <Input
+            label="Numéro demande"
+            name="numero_demande"
+            placeholder="ex : DOS-2026-0001"
+            hint="Laissez vide pour générer automatiquement"
+            value={form.numero_demande}
+            onChange={handleChange}
+          />
         </div>
 
         <Input
-          label="Référence"
-          name="reference"
-          placeholder="ex : REF-2026-0001"
-          hint="Laissez vide pour générer automatiquement"
-          value={form.reference}
+          label="Date d'enregistrement"
+          name="date_enregistrement"
+          type="date"
+          required
+          value={form.date_enregistrement}
           onChange={handleChange}
         />
 
         <div className="flex flex-col sm:flex-row gap-3 pt-2">
-          <Button type="submit" variant="primary" className="flex-1 justify-center">
+          <Button 
+            type="submit" 
+            variant="primary" 
+            className="flex-1 justify-center"
+            disabled={saving}
+          >
             <Save size={16} />
-            Enregistrer le dossier
+            {saving ? 'Enregistrement...' : 'Enregistrer le dossier'}
           </Button>
           <Link to="/dossiers" className="flex-1 sm:flex-none">
-            <Button type="button" variant="ghost" className="w-full justify-center">
+            <Button type="button" variant="ghost" className="w-full justify-center" disabled={saving}>
               Annuler
             </Button>
           </Link>

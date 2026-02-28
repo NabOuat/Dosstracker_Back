@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom'
 import { Button, Badge } from '../components/ui'
 import { motion, AnimatePresence } from 'framer-motion'
 import { getDossiers } from '../api/dossiers'
+import { useAuth } from '../context/AuthContext'
 
 const STATUTS = {
   courrier:     { label: 'Courrier',     color: '#1E40AF', bg: '#EFF6FF', border: '#BFDBFE' },
@@ -35,12 +36,15 @@ function StatusBadge({ statut }) {
 }
 
 export default function Dossiers() {
+  const { user } = useAuth()
   const [dossiers, setDossiers] = useState([])
   const [loading, setLoading] = useState(true)
   const [selectedDossiers, setSelectedDossiers] = useState([])
   const [showExportMenu, setShowExportMenu] = useState(false)
   const [showFilters, setShowFilters] = useState(false)
   const [filters, setFilters] = useState({ search: '', statut: '' })
+  
+  const isCourrier = user?.service === 'Service Courrier'
 
   useEffect(() => {
     getDossiers()
@@ -88,11 +92,13 @@ export default function Dossiers() {
               Tous les <span style={{ color: 'var(--ci-orange)' }}>dossiers</span>
             </h1>
           </div>
-          <Link to="/nouveau">
-            <Button variant="primary">
-              <Plus size={15} /> Nouveau dossier
-            </Button>
-          </Link>
+          {isCourrier && (
+            <Link to="/nouveau">
+              <Button variant="primary">
+                <Plus size={15} /> Nouveau dossier
+              </Button>
+            </Link>
+          )}
         </div>
 
         {/* ─── Barre recherche + filtres ─── */}
