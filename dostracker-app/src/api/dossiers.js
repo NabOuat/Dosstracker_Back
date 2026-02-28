@@ -35,22 +35,26 @@ export async function createDossier({ numero, demandeur, contact, date_enregistr
   try {
     // Étape 1 : créer ou retrouver le propriétaire
     let proprietaire_id
+    
+    // D'abord, essayer de retrouver le propriétaire par contact
     try {
-      const propResp = await axios.post('/api/v1/proprietaires', {
-        nom_complet: demandeur,
-        contact,
-      })
-      proprietaire_id = propResp.data.id
-    } catch (err) {
-      if (err.response?.status === 400) {
-        // Propriétaire déjà existant — le retrouver par contact
-        const existing = await axios.get('/api/v1/proprietaires', { params: { search: contact } })
-        const found = (existing.data || []).find(p => p.contact === contact)
-        if (!found) throw new Error('Impossible de retrouver le propriétaire existant')
+      const existing = await axios.get('/api/v1/proprietaires', { params: { search: contact } })
+      const found = (existing.data || []).find(p => p.contact === contact)
+      if (found) {
         proprietaire_id = found.id
+        console.log('Propriétaire trouvé:', proprietaire_id)
       } else {
-        throw err
+        // Propriétaire non trouvé, le créer
+        const propResp = await axios.post('/api/v1/proprietaires', {
+          nom_complet: demandeur,
+          contact,
+        })
+        proprietaire_id = propResp.data.id
+        console.log('Propriétaire créé:', proprietaire_id)
       }
+    } catch (err) {
+      console.error('Erreur lors de la gestion du propriétaire:', err)
+      throw new Error('Impossible de créer ou retrouver le propriétaire: ' + (err.response?.data?.detail || err.message))
     }
 
     // Étape 2 : créer le dossier avec les champs corrects
