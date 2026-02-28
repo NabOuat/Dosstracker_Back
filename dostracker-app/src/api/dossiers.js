@@ -128,6 +128,17 @@ export async function updateSpfeiTitre(id, data) {
   }
 }
 
+/** POST /dossiers/:id/resend-sms – Renvoie le SMS de non-conformité */
+export async function resendSms(id) {
+  try {
+    const response = await axios.post(`/api/v1/dossiers/${id}/resend-sms`)
+    return response.data
+  } catch (error) {
+    console.error(`Erreur lors du renvoi du SMS pour le dossier ${id}:`, error)
+    throw error
+  }
+}
+
 /** POST /dossiers/:id/envoyer – Envoyer le dossier au service suivant */
 export async function envoyerDossier(id, destination) {
   try {

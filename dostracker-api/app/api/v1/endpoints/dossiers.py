@@ -371,6 +371,77 @@ async def update_scvaa(
     return updated.data[0] if updated.data else response.data[0]
 
 
+@router.post("/{dossier_id}/resend-sms")
+async def resend_sms(
+    dossier_id: str,
+    current_user: dict = Depends(get_scvaa_user)
+) -> Any:
+    """Renvoie le SMS de non-conformité pour un dossier (SERVICE SCVAA)"""
+    supabase = get_supabase()
+
+    # Récupérer le dossier non conforme
+    dossier = supabase.table("dossiers").select("*").eq("id", dossier_id).eq("statut", "NON_CONFORME").execute()
+    if not dossier.data:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Dossier non trouvé ou non au statut NON_CONFORME")
+
+    dossier_info = supabase.table("v_dossiers").select("*").eq("id", dossier_id).execute()
+    if not dossier_info.data:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Dossier non trouvé")
+
+    d = dossier_info.data[0]
+    
+    # Récupérer les motifs d'inconformité du dernier SMS
+    sms_log = supabase.table("sms_log").select("*").eq("dossier_id", dossier_id).eq("type_sms", "NON_CONFORMITE").order("created_at", desc=True).limit(1).execute()
+    
+    contact_number = d.get("contact_demandeur", "")
+    twilio_number = os.getenv("TWILIO_PHONE_NUMBER", "")
+    
+    if not contact_number or contact_number == twilio_number:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Numéro de contact invalide ou identique au numéro Twilio")
+    
+    # Extraire les motifs du message précédent
+    motifs_str = ""
+    if sms_log.data:
+        message = sms_log.data[0].get("contenu_message", "")
+        # Extraire les motifs du message: "Dossier N° XXX : NON CONFORME. Motifs : ..."
+        if "Motifs :" in message:
+            motifs_str = message.split("Motifs :")[1].strip().rstrip(".")
+    
+    # Envoyer le SMS via Twilio
+    sms_result = sms_service.send_notification_sms(
+        to_number=contact_number,
+        notification_type="non_conforme",
+        context={
+            "numero": d["numero_dossier"],
+            "motifs": motifs_str
+        }
+    )
+    
+    # Enregistrer le nouveau SMS dans la base de données
+    sms_status = "ENVOYE" if sms_result.get("success") else "ERREUR"
+    sms_log_data = {
+        "dossier_id": dossier_id,
+        "type_sms": "NON_CONFORMITE",
+        "numero_destinataire": contact_number,
+        "contenu_message": f"Dossier N° {d['numero_dossier']} : NON CONFORME. Motifs : {motifs_str}.",
+        "statut": sms_status,
+        "envoye_par_id": current_user["id"],
+    }
+    
+    if sms_result.get("message_sid"):
+        sms_log_data["message_sid"] = sms_result.get("message_sid")
+    if sms_result.get("error"):
+        sms_log_data["erreur_details"] = sms_result.get("error")
+    
+    supabase.table("sms_log").insert(sms_log_data).execute()
+    
+    return {
+        "success": sms_result.get("success"),
+        "message": "SMS renvoyé avec succès" if sms_result.get("success") else "Erreur lors de l'envoi du SMS",
+        "error": sms_result.get("error")
+    }
+
+
 @router.put("/{dossier_id}/spfei-titre", response_model=Dossier)
 async def update_spfei_titre(
     dossier_id: str,

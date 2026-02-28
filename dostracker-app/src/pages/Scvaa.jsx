@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { CheckCircle, XCircle, Send, Save, ChevronLeft, CheckSquare, Square } from 'lucide-react'
-import { getDossiers, updateScvaa } from '../api/dossiers'
+import { getDossiers, updateScvaa, resendSms } from '../api/dossiers'
 import DossierCard from '../components/DossierCard'
 import DossierDetail from '../components/DossierDetail'
 import Button from '../components/ui/Button'
@@ -20,6 +20,7 @@ export default function Scvaa() {
   const [selected, setSelected] = useState(null)
   const [saving,   setSaving]   = useState(false)
   const [sending,  setSending]  = useState(false)
+  const [resending, setResending] = useState(null)
   const [success,  setSuccess]  = useState('')
   const [error,    setError]    = useState('')
   const [selectedDossiers, setSelectedDossiers] = useState([])
@@ -85,6 +86,20 @@ export default function Scvaa() {
       ? f.motifs_inconformite.filter(x => x !== m)
       : [...f.motifs_inconformite, m],
   }))
+
+  const handleResendSms = async (dossierId) => {
+    setResending(dossierId)
+    try {
+      await resendSms(dossierId)
+      setSuccess('✅ SMS renvoyé avec succès au propriétaire.')
+      setTimeout(() => setSuccess(''), 4000)
+    } catch (err) {
+      const errorMsg = err.response?.data?.detail || err.message || 'Erreur inconnue'
+      setError(`❌ Erreur: ${errorMsg}`)
+    } finally {
+      setResending(null)
+    }
+  }
 
   const handleSubmit = async e => {
     e.preventDefault()
@@ -327,14 +342,25 @@ export default function Scvaa() {
                       <span className="px-2 py-1 bg-red-100 text-red-700 rounded">Motifs: {d.motifs_inconformite?.join(', ') || 'Non spécifiés'}</span>
                     </div>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setSelected(d)}
-                    style={{ color: '#EF4444' }}
-                  >
-                    Voir détails
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setSelected(d)}
+                      style={{ color: '#EF4444' }}
+                    >
+                      Voir détails
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      disabled={resending === d.id}
+                      onClick={() => handleResendSms(d.id)}
+                      style={{ color: '#EF4444' }}
+                    >
+                      <Send size={14} /> {resending === d.id ? 'Envoi...' : 'Renvoyer SMS'}
+                    </Button>
+                  </div>
                 </div>
               </motion.div>
             ))}
