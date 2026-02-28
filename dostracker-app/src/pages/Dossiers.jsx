@@ -93,7 +93,7 @@ export default function Dossiers() {
             </h1>
           </div>
           {isCourrier && (
-            <Link to="/nouveau">
+            <Link to="/courrier">
               <Button variant="primary">
                 <Plus size={15} /> Nouveau dossier
               </Button>

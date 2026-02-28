@@ -15,6 +15,7 @@ export default function NouveauDossier() {
     village: '', 
     departement: '',
     numero_demande: '',
+    numero_cf: '',
     date_enregistrement: new Date().toISOString().slice(0, 10)
   })
   const [saved, setSaved] = useState(false)
@@ -42,7 +43,7 @@ export default function NouveauDossier() {
         sous_prefecture: form.sous_prefecture,
         village: form.village,
         departement: form.departement,
-        numero_cf: form.numero_demande
+        numero_cf: form.numero_cf
       })
       setSaved(true)
       setTimeout(() => navigate('/dossiers'), 2000)
@@ -84,20 +85,38 @@ export default function NouveauDossier() {
 
       <form onSubmit={handleSubmit} className="bg-white rounded-lg p-6 sm:p-8 flex flex-col gap-5" style={{ boxShadow: 'var(--shadow-md)' }}>
 
+        <Input
+          label="N° de dossier"
+          name="numero_demande"
+          placeholder="ex : DOS-2026-0001"
+          hint="Laissez vide pour générer automatiquement"
+          value={form.numero_demande}
+          onChange={handleChange}
+        />
+
+        <Input
+          label="Date d'enregistrement"
+          name="date_enregistrement"
+          type="date"
+          required
+          value={form.date_enregistrement}
+          onChange={handleChange}
+        />
+
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <Input
             label="Nom du demandeur"
             name="demandeur"
             required
-            placeholder="ex : Kouassi Emmanuel"
+            placeholder="Nom Prénom"
             value={form.demandeur}
             onChange={handleChange}
           />
           <Input
-            label="Contact"
+            label="Contact (téléphone)"
             name="contact"
             required
-            placeholder="ex : +225 07 12 34 56 78"
+            placeholder="07XXXXXXXX"
             value={form.contact}
             onChange={handleChange}
           />
@@ -113,15 +132,22 @@ export default function NouveauDossier() {
             onChange={handleChange}
           />
           <Input
+            label="Département"
+            name="departement"
+            placeholder="ex : Abidjan 1"
+            value={form.departement}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <Input
             label="Préfecture"
             name="prefecture"
             placeholder="ex : Abidjan"
             value={form.prefecture}
             onChange={handleChange}
           />
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <Input
             label="Sous-préfecture"
             name="sous_prefecture"
@@ -129,6 +155,9 @@ export default function NouveauDossier() {
             value={form.sous_prefecture}
             onChange={handleChange}
           />
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <Input
             label="Village"
             name="village"
@@ -136,34 +165,14 @@ export default function NouveauDossier() {
             value={form.village}
             onChange={handleChange}
           />
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <Input
-            label="Département"
-            name="departement"
-            placeholder="ex : Abidjan 1"
-            value={form.departement}
-            onChange={handleChange}
-          />
-          <Input
-            label="Numéro demande"
-            name="numero_demande"
-            placeholder="ex : DOS-2026-0001"
-            hint="Laissez vide pour générer automatiquement"
-            value={form.numero_demande}
-            onChange={handleChange}
+            label="Numéro du CF"
+            name="numero_cf"
+            placeholder="ex : CF-2026-0001"
+            value={form.numero_cf || ''}
+            onChange={e => setForm(f => ({ ...f, numero_cf: e.target.value }))}
           />
         </div>
-
-        <Input
-          label="Date d'enregistrement"
-          name="date_enregistrement"
-          type="date"
-          required
-          value={form.date_enregistrement}
-          onChange={handleChange}
-        />
 
         <div className="flex flex-col sm:flex-row gap-3 pt-2">
           <Button 
