@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { MessageSquare, Phone, Calendar } from 'lucide-react'
-import { MOCK_SMS } from '../utils/mockData'
+import { getSmsHistory } from '../api/sms'
 
 const TYPE_STYLE = {
   NON_CONFORME: { bg: '#FEF2F2', text: '#991B1B', dot: '#EF4444', label: 'Non Conforme' },
@@ -15,7 +15,17 @@ function fmt(iso) {
 
 export default function SmsLog() {
   const [sms, setSms] = useState([])
-  useEffect(() => { setSms([...MOCK_SMS]) }, [])
+  const [loading, setLoading] = useState(true)
+  
+  useEffect(() => {
+    getSmsHistory()
+      .then(data => setSms(data || []))
+      .catch(err => {
+        console.error('Erreur chargement SMS:', err)
+        setSms([])
+      })
+      .finally(() => setLoading(false))
+  }, [])
 
   return (
     <div className="max-w-[900px] mx-auto px-4 sm:px-6 py-8">

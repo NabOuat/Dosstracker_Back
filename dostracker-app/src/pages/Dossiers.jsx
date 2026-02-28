@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import {
   Search, Filter, Plus, Download, Send,
   CheckSquare, Square, X, ChevronDown
@@ -6,15 +6,7 @@ import {
 import { Link } from 'react-router-dom'
 import { Button, Badge } from '../components/ui'
 import { motion, AnimatePresence } from 'framer-motion'
-
-const DOSSIERS = [
-  { num: 'DOS-2024-0142', nom: 'Kouassi Emmanuel',  type: 'SPFEI', statut: 'spfei',        date: '18/02/2026' },
-  { num: 'DOS-2024-0141', nom: 'Diallo Fatoumata',  type: 'SCVAA', statut: 'scvaa',        date: '17/02/2026' },
-  { num: 'DOS-2024-0140', nom: 'Koné Adama',        type: 'SPFEI', statut: 'nonconforme',  date: '16/02/2026' },
-  { num: 'DOS-2024-0139', nom: 'Traoré Mariam',     type: 'SCVAA', statut: 'termine',      date: '15/02/2026' },
-  { num: 'DOS-2024-0138', nom: 'Bamba Sékou',       type: 'SPFEI', statut: 'conservation', date: '14/02/2026' },
-  { num: 'DOS-2024-0137', nom: 'Coulibaly Fatou',   type: 'SCVAA', statut: 'courrier',     date: '13/02/2026' },
-]
+import { getDossiers } from '../api/dossiers'
 
 const STATUTS = {
   courrier:     { label: 'Courrier',     color: '#1E40AF', bg: '#EFF6FF', border: '#BFDBFE' },
@@ -43,19 +35,31 @@ function StatusBadge({ statut }) {
 }
 
 export default function Dossiers() {
+  const [dossiers, setDossiers] = useState([])
+  const [loading, setLoading] = useState(true)
   const [selectedDossiers, setSelectedDossiers] = useState([])
   const [showExportMenu, setShowExportMenu] = useState(false)
   const [showFilters, setShowFilters] = useState(false)
   const [filters, setFilters] = useState({ search: '', statut: '' })
 
-  const filtered = useMemo(() => DOSSIERS.filter(d => {
+  useEffect(() => {
+    getDossiers()
+      .then(data => setDossiers(data || []))
+      .catch(err => {
+        console.error('Erreur chargement dossiers:', err)
+        setDossiers([])
+      })
+      .finally(() => setLoading(false))
+  }, [])
+
+  const filtered = useMemo(() => dossiers.filter(d => {
     if (filters.search && !(
-      d.nom.toLowerCase().includes(filters.search.toLowerCase()) ||
-      d.num.toLowerCase().includes(filters.search.toLowerCase())
+      (d.nom_demandeur || '').toLowerCase().includes(filters.search.toLowerCase()) ||
+      (d.numero_dossier || '').toLowerCase().includes(filters.search.toLowerCase())
     )) return false
     if (filters.statut && d.statut !== filters.statut) return false
     return true
-  }), [filters])
+  }), [dossiers, filters])
 
   const toggleSelect = (num) =>
     setSelectedDossiers(prev =>
@@ -277,19 +281,19 @@ export default function Dossiers() {
               <tbody>
                 {filtered.map((d, i) => (
                   <motion.tr
-                    key={d.num}
+                    key={d.id}
                     layout
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.2, delay: i * 0.04 }}
                     style={{
-                      background: selectedDossiers.includes(d.num)
+                      background: selectedDossiers.includes(d.id)
                         ? 'var(--ci-orange-pale)' : undefined,
                     }}
                   >
                     <td style={{ textAlign: 'center' }}>
-                      <button onClick={() => toggleSelect(d.num)}>
-                        {selectedDossiers.includes(d.num)
+                      <button onClick={() => toggleSelect(d.id)}>
+                        {selectedDossiers.includes(d.id)
                           ? <CheckSquare size={16} style={{ color: 'var(--ci-orange)' }} />
                           : <Square size={16} style={{ color: 'var(--n-300)' }} />
                         }
@@ -297,18 +301,18 @@ export default function Dossiers() {
                     </td>
                     <td>
                       <span className="mono font-semibold" style={{ color: 'var(--n-800)' }}>
-                        {d.num}
+                        {d.numero_dossier}
                       </span>
                     </td>
-                    <td style={{ color: 'var(--n-700)' }}>{d.nom}</td>
+                    <td style={{ color: 'var(--n-700)' }}>{d.nom_demandeur || d.demandeur || '–'}</td>
                     <td>
                       <span className="text-xs font-semibold" style={{ color: 'var(--n-500)' }}>
-                        {d.type}
+                        {d.type || '–'}
                       </span>
                     </td>
                     <td><StatusBadge statut={d.statut} /></td>
                     <td style={{ color: 'var(--n-400)', fontFamily: 'var(--font-mono)', fontSize: '0.78rem' }}>
-                      {d.date}
+                      {d.created_at ? new Date(d.created_at).toLocaleDateString('fr-FR') : '–'}
                     </td>
                     <td style={{ textAlign: 'right' }}>
                       <Button variant="ghost" size="sm" style={{ borderRadius: 6 }}>
@@ -332,7 +336,7 @@ export default function Dossiers() {
           <div className="md:hidden">
             {filtered.map((d, i) => (
               <motion.div
-                key={d.num}
+                key={d.id}
                 layout
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -340,27 +344,27 @@ export default function Dossiers() {
                 style={{
                   padding: '14px 16px',
                   borderBottom: '1px solid var(--n-100)',
-                  background: selectedDossiers.includes(d.num) ? 'var(--ci-orange-pale)' : undefined,
+                  background: selectedDossiers.includes(d.id) ? 'var(--ci-orange-pale)' : undefined,
                 }}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-start gap-2.5">
-                    <button className="mt-0.5" onClick={() => toggleSelect(d.num)}>
-                      {selectedDossiers.includes(d.num)
+                    <button className="mt-0.5" onClick={() => toggleSelect(d.id)}>
+                      {selectedDossiers.includes(d.id)
                         ? <CheckSquare size={16} style={{ color: 'var(--ci-orange)' }} />
                         : <Square size={16} style={{ color: 'var(--n-300)' }} />
                       }
                     </button>
                     <div>
-                      <p className="mono font-semibold text-sm" style={{ color: 'var(--n-800)' }}>{d.num}</p>
-                      <p className="text-sm mt-0.5" style={{ color: 'var(--n-600)' }}>{d.nom}</p>
+                      <p className="mono font-semibold text-sm" style={{ color: 'var(--n-800)' }}>{d.numero_dossier}</p>
+                      <p className="text-sm mt-0.5" style={{ color: 'var(--n-600)' }}>{d.nom_demandeur || d.demandeur || '–'}</p>
                     </div>
                   </div>
                   <StatusBadge statut={d.statut} />
                 </div>
                 <div className="flex items-center justify-between mt-2 pl-7">
                   <p className="text-xs" style={{ color: 'var(--n-400)', fontFamily: 'var(--font-mono)' }}>
-                    {d.type} · {d.date}
+                    {d.type || '–'} · {d.created_at ? new Date(d.created_at).toLocaleDateString('fr-FR') : '–'}
                   </p>
                   <Button variant="ghost" size="sm" style={{ borderRadius: 6, fontSize: 12 }}>
                     Voir

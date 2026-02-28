@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { CheckCircle, XCircle, Send, Save, ChevronLeft, CheckSquare, Square } from 'lucide-react'
 import { getDossiers, updateScvaa } from '../api/dossiers'
-import { MOTIFS_INCONFORMITE } from '../utils/mockData'
+import { getMotifs } from '../api/admin'
 import DossierCard from '../components/DossierCard'
 import DossierDetail from '../components/DossierDetail'
 import Button from '../components/ui/Button'
@@ -13,6 +13,7 @@ const INIT = { superficie_ha: '', date_bornage: '', geometre_expert: '', contact
 
 export default function Scvaa() {
   const [dossiers, setDossiers] = useState([])
+  const [motifs, setMotifs] = useState([])
   const [active,   setActive]   = useState(null)
   const [form,     setForm]     = useState(INIT)
   const [selected, setSelected] = useState(null)
@@ -23,7 +24,16 @@ export default function Scvaa() {
   const [selectedDossiers, setSelectedDossiers] = useState([])
 
   const load = () => getDossiers('SCVAA').then(setDossiers)
-  useEffect(() => { load() }, [])
+  
+  useEffect(() => {
+    load()
+    getMotifs()
+      .then(data => setMotifs(data || []))
+      .catch(err => {
+        console.error('Erreur chargement motifs:', err)
+        setMotifs([])
+      })
+  }, [])
 
   const handleOpen = d => { setActive(d); setForm({ ...INIT, ...d, motifs_inconformite: [], envoi_sms: false }) }
 
