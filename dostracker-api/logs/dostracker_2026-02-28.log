@@ -1,0 +1,82 @@
+2026-02-28 14:09:01 - dostracker - INFO - [auth.py:24] - Tentative de connexion pour l'utilisateur: ouattara.nadia
+2026-02-28 14:09:01 - dostracker - DEBUG - [auth.py:29] - Connexion à Supabase établie
+2026-02-28 14:09:01 - dostracker - DEBUG - [auth.py:31] - Tentative de requête: table='users', colonne='username', valeur='ouattara.nadia'
+2026-02-28 14:09:02 - dostracker - DEBUG - [auth.py:33] - Réponse Supabase reçue pour l'utilisateur ouattara.nadia
+2026-02-28 14:09:02 - dostracker - DEBUG - [auth.py:34] - Données reçues: [{'id': '91d0f17b-f9da-4f76-9660-67a991d5b92a', 'nom_complet': 'OUATTARA Nadia', 'username': 'ouattara.nadia', 'email': 'ouattara.nadia@dostracker.ci', 'hashed_password': '$2b$12$xlGmOZy6J2nDk6GYCt7GB.gf.UCyOcFRYQdNr.NNeXzKU8rUegMuO', 'service_id': 3, 'is_active': True, 'last_login': None, 'created_at': '2026-02-18T17:37:02.194282+00:00', 'updated_at': '2026-02-28T13:02:52.135278+00:00', 'services': {'nom': 'SERVICE_SCVAA', 'libelle': 'Service SCVAA'}}]
+2026-02-28 14:09:02 - dostracker - DEBUG - [auth.py:35] - Nombre d'utilisateurs trouvés: 1
+2026-02-28 14:09:02 - dostracker - DEBUG - [auth.py:51] - Utilisateur trouvé: ouattara.nadia, ID: 91d0f17b-f9da-4f76-9660-67a991d5b92a
+2026-02-28 14:09:02 - dostracker - DEBUG - [auth.py:62] - Mot de passe vérifié pour l'utilisateur: ouattara.nadia
+2026-02-28 14:09:02 - dostracker - DEBUG - [auth.py:72] - Utilisateur actif: ouattara.nadia
+2026-02-28 14:09:02 - dostracker - DEBUG - [auth.py:79] - Date de dernière connexion mise à jour pour: ouattara.nadia
+2026-02-28 14:09:02 - dostracker - INFO - [auth.py:85] - Connexion réussie pour l'utilisateur: ouattara.nadia
+2026-02-28 14:09:03 - dostracker - DEBUG - [users.py:344] - Vérification de la première connexion pour ouattara.nadia
+2026-02-28 14:09:03 - dostracker - INFO - [users.py:349] - Première connexion pour ouattara.nadia: False
+2026-02-28 14:09:03 - dostracker - DEBUG - [users.py:344] - Vérification de la première connexion pour ouattara.nadia
+2026-02-28 14:09:03 - dostracker - INFO - [users.py:349] - Première connexion pour ouattara.nadia: False
+2026-02-28 14:09:29 - dostracker - DEBUG - [users.py:344] - Vérification de la première connexion pour ouattara.nadia
+2026-02-28 14:09:29 - dostracker - INFO - [users.py:349] - Première connexion pour ouattara.nadia: False
+2026-02-28 14:09:29 - dostracker - DEBUG - [users.py:344] - Vérification de la première connexion pour ouattara.nadia
+2026-02-28 14:09:29 - dostracker - INFO - [users.py:349] - Première connexion pour ouattara.nadia: False
+2026-02-28 14:11:34 - dostracker - INFO - [auth_enhanced.py:212] - Endpoint logout appelé
+2026-02-28 14:11:34 - dostracker - DEBUG - [auth_enhanced.py:240] - Token révoqué pour l'utilisateur: ouattara.nadia
+2026-02-28 14:11:34 - dostracker - INFO - [auth_enhanced.py:244] - Déconnexion réussie pour l'utilisateur: ouattara.nadia
+2026-02-28 14:11:49 - dostracker - INFO - [auth.py:24] - Tentative de connexion pour l'utilisateur: bamba.aissatou
+2026-02-28 14:11:49 - dostracker - DEBUG - [auth.py:29] - Connexion à Supabase établie
+2026-02-28 14:11:49 - dostracker - DEBUG - [auth.py:31] - Tentative de requête: table='users', colonne='username', valeur='bamba.aissatou'
+2026-02-28 14:11:50 - dostracker - DEBUG - [auth.py:33] - Réponse Supabase reçue pour l'utilisateur bamba.aissatou
+2026-02-28 14:11:50 - dostracker - DEBUG - [auth.py:34] - Données reçues: [{'id': '81f3ba15-fa6f-4c79-9bec-8817d8a240a3', 'nom_complet': 'BAMBA Aïssatou', 'username': 'bamba.aissatou', 'email': 'bamba.aissatou@dostracker.ci', 'hashed_password': '$2b$12$xlGmOZy6J2nDk6GYCt7GB.gf.UCyOcFRYQdNr.NNeXzKU8rUegMuO', 'service_id': 1, 'is_active': True, 'last_login': None, 'created_at': '2026-02-18T17:37:02.194282+00:00', 'updated_at': '2026-02-28T13:02:52.135278+00:00', 'services': {'nom': 'SERVICE_COURRIER', 'libelle': 'Service Courrier'}}]
+2026-02-28 14:11:50 - dostracker - DEBUG - [auth.py:35] - Nombre d'utilisateurs trouvés: 1
+2026-02-28 14:11:50 - dostracker - DEBUG - [auth.py:51] - Utilisateur trouvé: bamba.aissatou, ID: 81f3ba15-fa6f-4c79-9bec-8817d8a240a3
+2026-02-28 14:11:50 - dostracker - DEBUG - [auth.py:62] - Mot de passe vérifié pour l'utilisateur: bamba.aissatou
+2026-02-28 14:11:50 - dostracker - DEBUG - [auth.py:72] - Utilisateur actif: bamba.aissatou
+2026-02-28 14:11:50 - dostracker - DEBUG - [auth.py:79] - Saut de la mise à jour de last_login pour permettre la détection de première connexion
+2026-02-28 14:11:50 - dostracker - INFO - [auth.py:85] - Connexion réussie pour l'utilisateur: bamba.aissatou
+2026-02-28 14:11:51 - dostracker - DEBUG - [users.py:344] - Vérification de la première connexion pour bamba.aissatou
+2026-02-28 14:11:51 - dostracker - INFO - [users.py:349] - Première connexion pour bamba.aissatou: True
+2026-02-28 14:11:51 - dostracker - DEBUG - [users.py:344] - Vérification de la première connexion pour bamba.aissatou
+2026-02-28 14:11:51 - dostracker - INFO - [users.py:349] - Première connexion pour bamba.aissatou: True
+2026-02-28 14:12:58 - dostracker - DEBUG - [users.py:363] - Marquage de la première connexion comme complétée pour bamba.aissatou
+2026-02-28 14:12:58 - dostracker - INFO - [users.py:378] - Première connexion marquée comme complétée pour bamba.aissatou
+2026-02-28 14:12:58 - dostracker - DEBUG - [users.py:363] - Marquage de la première connexion comme complétée pour bamba.aissatou
+2026-02-28 14:12:59 - dostracker - INFO - [users.py:378] - Première connexion marquée comme complétée pour bamba.aissatou
+2026-02-28 14:15:49 - dostracker - INFO - [auth_enhanced.py:212] - Endpoint logout appelé
+2026-02-28 14:15:49 - dostracker - DEBUG - [auth_enhanced.py:240] - Token révoqué pour l'utilisateur: bamba.aissatou
+2026-02-28 14:15:49 - dostracker - INFO - [auth_enhanced.py:244] - Déconnexion réussie pour l'utilisateur: bamba.aissatou
+2026-02-28 14:16:00 - dostracker - INFO - [auth.py:24] - Tentative de connexion pour l'utilisateur: admin
+2026-02-28 14:16:00 - dostracker - DEBUG - [auth.py:29] - Connexion à Supabase établie
+2026-02-28 14:16:00 - dostracker - DEBUG - [auth.py:31] - Tentative de requête: table='users', colonne='username', valeur='admin'
+2026-02-28 14:16:00 - dostracker - DEBUG - [auth.py:33] - Réponse Supabase reçue pour l'utilisateur admin
+2026-02-28 14:16:00 - dostracker - DEBUG - [auth.py:34] - Données reçues: [{'id': 'fbab1e59-75c2-4ae2-ad35-13112a79a3bb', 'nom_complet': 'Administrateur', 'username': 'admin', 'email': 'admin@dostracker.ci', 'hashed_password': '$2b$12$lqQwrchi9tTSdeWgHhpdFe/hAtDwvEGWmWqw7hW1K4801hyRsYDQq', 'service_id': 4, 'is_active': True, 'last_login': '2026-02-28T13:58:59.405298+00:00', 'created_at': '2026-02-19T17:09:06.842034+00:00', 'updated_at': '2026-02-28T13:58:59.405298+00:00', 'services': {'nom': 'ADMIN', 'libelle': 'Administration'}}]
+2026-02-28 14:16:00 - dostracker - DEBUG - [auth.py:35] - Nombre d'utilisateurs trouvés: 1
+2026-02-28 14:16:00 - dostracker - DEBUG - [auth.py:51] - Utilisateur trouvé: admin, ID: fbab1e59-75c2-4ae2-ad35-13112a79a3bb
+2026-02-28 14:16:01 - dostracker - DEBUG - [auth.py:62] - Mot de passe vérifié pour l'utilisateur: admin
+2026-02-28 14:16:01 - dostracker - DEBUG - [auth.py:72] - Utilisateur actif: admin
+2026-02-28 14:16:01 - dostracker - DEBUG - [auth.py:79] - Saut de la mise à jour de last_login pour permettre la détection de première connexion
+2026-02-28 14:16:01 - dostracker - INFO - [auth.py:85] - Connexion réussie pour l'utilisateur: admin
+2026-02-28 14:16:01 - dostracker - DEBUG - [users.py:344] - Vérification de la première connexion pour admin
+2026-02-28 14:16:01 - dostracker - INFO - [users.py:349] - Première connexion pour admin: False
+2026-02-28 14:16:01 - dostracker - DEBUG - [users.py:344] - Vérification de la première connexion pour admin
+2026-02-28 14:16:01 - dostracker - INFO - [users.py:349] - Première connexion pour admin: False
+2026-02-28 14:33:54 - dostracker - DEBUG - [users.py:344] - Vérification de la première connexion pour admin
+2026-02-28 14:33:54 - dostracker - INFO - [users.py:349] - Première connexion pour admin: False
+2026-02-28 14:33:55 - dostracker - DEBUG - [users.py:344] - Vérification de la première connexion pour admin
+2026-02-28 14:33:55 - dostracker - INFO - [users.py:349] - Première connexion pour admin: False
+2026-02-28 14:41:05 - dostracker - DEBUG - [users.py:344] - Vérification de la première connexion pour admin
+2026-02-28 14:41:05 - dostracker - INFO - [users.py:349] - Première connexion pour admin: False
+2026-02-28 14:41:05 - dostracker - DEBUG - [users.py:344] - Vérification de la première connexion pour admin
+2026-02-28 14:41:05 - dostracker - INFO - [users.py:349] - Première connexion pour admin: False
+2026-02-28 14:50:54 - dostracker - INFO - [auth.py:24] - Tentative de connexion pour l'utilisateur: admin
+2026-02-28 14:50:54 - dostracker - DEBUG - [auth.py:29] - Connexion à Supabase établie
+2026-02-28 14:50:54 - dostracker - DEBUG - [auth.py:31] - Tentative de requête: table='users', colonne='username', valeur='admin'
+2026-02-28 14:50:55 - dostracker - DEBUG - [auth.py:33] - Réponse Supabase reçue pour l'utilisateur admin
+2026-02-28 14:50:55 - dostracker - DEBUG - [auth.py:34] - Données reçues: [{'id': 'fbab1e59-75c2-4ae2-ad35-13112a79a3bb', 'nom_complet': 'Administrateur', 'username': 'admin', 'email': 'admin@dostracker.ci', 'hashed_password': '$2b$12$lqQwrchi9tTSdeWgHhpdFe/hAtDwvEGWmWqw7hW1K4801hyRsYDQq', 'service_id': 4, 'is_active': True, 'last_login': '2026-02-28T13:58:59.405298+00:00', 'created_at': '2026-02-19T17:09:06.842034+00:00', 'updated_at': '2026-02-28T13:58:59.405298+00:00', 'services': {'nom': 'ADMIN', 'libelle': 'Administration'}}]
+2026-02-28 14:50:55 - dostracker - DEBUG - [auth.py:35] - Nombre d'utilisateurs trouvés: 1
+2026-02-28 14:50:55 - dostracker - DEBUG - [auth.py:51] - Utilisateur trouvé: admin, ID: fbab1e59-75c2-4ae2-ad35-13112a79a3bb
+2026-02-28 14:50:56 - dostracker - DEBUG - [auth.py:62] - Mot de passe vérifié pour l'utilisateur: admin
+2026-02-28 14:50:56 - dostracker - DEBUG - [auth.py:72] - Utilisateur actif: admin
+2026-02-28 14:50:56 - dostracker - DEBUG - [auth.py:79] - Saut de la mise à jour de last_login pour permettre la détection de première connexion
+2026-02-28 14:50:56 - dostracker - INFO - [auth.py:85] - Connexion réussie pour l'utilisateur: admin
+2026-02-28 14:50:56 - dostracker - DEBUG - [users.py:344] - Vérification de la première connexion pour admin
+2026-02-28 14:50:56 - dostracker - INFO - [users.py:349] - Première connexion pour admin: False
+2026-02-28 14:50:56 - dostracker - DEBUG - [users.py:344] - Vérification de la première connexion pour admin
+2026-02-28 14:50:56 - dostracker - INFO - [users.py:349] - Première connexion pour admin: False

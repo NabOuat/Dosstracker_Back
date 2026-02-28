@@ -1,0 +1,1853 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DosTracker — Charte Graphique</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* ===== PALETTE DOSTRACKER – CÔTE D'IVOIRE ===== */
+  --ci-orange:     #F47920;
+  --ci-orange-light: #F9A05A;
+  --ci-orange-pale:  #FEF0E4;
+  --ci-orange-dark:  #C85E08;
+
+  --ci-green:      #00853F;
+  --ci-green-light: #43B074;
+  --ci-green-pale:  #E4F5EC;
+  --ci-green-dark:  #005C2B;
+
+  --ci-white:      #FFFFFF;
+  --ci-off-white:  #F8F9FA;
+  --ci-cream:      #FDF8F3;
+
+  --neutral-900:   #0F1923;
+  --neutral-800:   #1C2B3A;
+  --neutral-700:   #2D3F50;
+  --neutral-500:   #64748B;
+  --neutral-400:   #94A3B8;
+  --neutral-200:   #E2E8F0;
+  --neutral-100:   #F1F5F9;
+
+  --shadow-sm: 0 2px 8px rgba(15,25,35,0.06);
+  --shadow-md: 0 8px 32px rgba(15,25,35,0.10);
+  --shadow-lg: 0 20px 60px rgba(15,25,35,0.14);
+  --shadow-orange: 0 8px 32px rgba(244,121,32,0.25);
+  --shadow-green: 0 8px 32px rgba(0,133,63,0.20);
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 24px;
+  --radius-xl: 36px;
+  --radius-full: 9999px;
+
+  --font-display: 'Outfit', sans-serif;
+  --font-body: 'Nunito', sans-serif;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: #F0F4F8;
+  color: var(--neutral-800);
+  line-height: 1.6;
+}
+
+/* ===== SCROLL INDICATOR ===== */
+.scroll-indicator {
+  position: fixed;
+  top: 0; left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--ci-orange), var(--ci-green));
+  z-index: 9999;
+  width: 0%;
+  transition: width 0.1s;
+}
+
+/* ===== NAVIGATION ===== */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--neutral-200);
+  padding: 0 2rem;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.nav-logo-icon {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, var(--ci-orange), var(--ci-orange-dark));
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem;
+  box-shadow: var(--shadow-orange);
+}
+
+.nav-logo-text {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.2rem;
+  color: var(--neutral-900);
+  letter-spacing: -0.02em;
+}
+.nav-logo-text span { color: var(--ci-orange); }
+
+.nav-links {
+  display: flex;
+  gap: 0.25rem;
+  list-style: none;
+}
+.nav-links a {
+  text-decoration: none;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--neutral-500);
+  padding: 0.4rem 0.9rem;
+  border-radius: var(--radius-full);
+  transition: all 0.2s;
+}
+.nav-links a:hover { color: var(--ci-orange); background: var(--ci-orange-pale); }
+
+/* ===== MAIN ===== */
+main { padding-top: 64px; }
+
+/* ===== SECTIONS ===== */
+section {
+  padding: 5rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.section-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--ci-orange-pale);
+  color: var(--ci-orange-dark);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.4rem 1rem;
+  border-radius: var(--radius-full);
+  margin-bottom: 1.2rem;
+}
+.section-label.green { background: var(--ci-green-pale); color: var(--ci-green-dark); }
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
+  color: var(--neutral-900);
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.75rem;
+}
+.section-title span { color: var(--ci-orange); }
+.section-title span.green { color: var(--ci-green); }
+
+.section-sub {
+  font-size: 1.05rem;
+  color: var(--neutral-500);
+  max-width: 600px;
+  line-height: 1.7;
+  margin-bottom: 3rem;
+}
+
+/* ===== HERO ===== */
+.hero {
+  min-height: 100vh;
+  background: linear-gradient(160deg, var(--neutral-900) 0%, var(--neutral-800) 50%, #1a3020 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  padding: 0 2rem;
+}
+
+.hero-bg-shapes {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.hero-bg-shapes::before {
+  content: '';
+  position: absolute;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(244,121,32,0.15) 0%, transparent 70%);
+  top: -100px; right: -100px;
+  animation: pulse-glow 4s ease-in-out infinite;
+}
+.hero-bg-shapes::after {
+  content: '';
+  position: absolute;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(0,133,63,0.12) 0%, transparent 70%);
+  bottom: -80px; left: -80px;
+  animation: pulse-glow 4s ease-in-out infinite 2s;
+}
+
+/* CI flag stripes subtle */
+.hero-stripes {
+  position: absolute;
+  top: 0; bottom: 0; right: 0;
+  width: 180px;
+  display: flex;
+  opacity: 0.06;
+}
+.hero-stripes div:nth-child(1) { flex: 1; background: var(--ci-orange); }
+.hero-stripes div:nth-child(2) { flex: 1; background: var(--ci-white); }
+.hero-stripes div:nth-child(3) { flex: 1; background: var(--ci-green); }
+
+@keyframes pulse-glow {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.7; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  max-width: 900px;
+  animation: slideUp 0.8s ease forwards;
+}
+
+/* BIG LOGO */
+.big-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+  animation: float 6s ease-in-out infinite;
+}
+
+.big-logo-icon {
+  width: 90px; height: 90px;
+  background: linear-gradient(145deg, var(--ci-orange), var(--ci-orange-dark));
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 20px 60px rgba(244,121,32,0.4), 0 0 0 1px rgba(255,255,255,0.1);
+  position: relative;
+  overflow: hidden;
+}
+.big-logo-icon::before {
+  content: '';
+  position: absolute;
+  top: -20px; right: -20px;
+  width: 60px; height: 60px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 50%;
+}
+
+.logo-svg {
+  width: 52px; height: 52px;
+  position: relative;
+  z-index: 1;
+}
+
+.big-logo-text {
+  text-align: left;
+}
+.big-logo-name {
+  font-family: var(--font-display);
+  font-size: 3.5rem;
+  font-weight: 900;
+  color: white;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+.big-logo-name .dos { color: white; }
+.big-logo-name .tracker { color: var(--ci-orange); }
+.big-logo-tagline {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-top: 0.3rem;
+}
+
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+  font-weight: 700;
+  color: white;
+  margin-bottom: 1rem;
+  line-height: 1.3;
+}
+.hero-title em { color: var(--ci-orange); font-style: normal; }
+.hero-title strong { color: var(--ci-green-light); font-weight: 700; }
+
+.hero-sub {
+  color: rgba(255,255,255,0.55);
+  font-size: 1rem;
+  margin-bottom: 2.5rem;
+  line-height: 1.7;
+}
+
+/* CI FLAG BADGE */
+.ci-flag-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  border: 2px solid rgba(255,255,255,0.15);
+  margin-bottom: 1.5rem;
+}
+.ci-flag-badge span {
+  display: block;
+  width: 28px; height: 16px;
+}
+.ci-flag-badge .f-or { background: var(--ci-orange); }
+.ci-flag-badge .f-wh { background: white; }
+.ci-flag-badge .f-gr { background: var(--ci-green); }
+.ci-flag-label {
+  color: rgba(255,255,255,0.6);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  margin-left: 0.75rem;
+}
+
+/* Scroll hint */
+.scroll-hint {
+  position: absolute;
+  bottom: 2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: rgba(255,255,255,0.35);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  animation: fadeIn 2s 1s both;
+}
+.scroll-dot {
+  width: 20px; height: 32px;
+  border: 1.5px solid rgba(255,255,255,0.25);
+  border-radius: 10px;
+  position: relative;
+}
+.scroll-dot::after {
+  content: '';
+  position: absolute;
+  top: 5px; left: 50%;
+  transform: translateX(-50%);
+  width: 3px; height: 6px;
+  background: rgba(255,255,255,0.4);
+  border-radius: 2px;
+  animation: scroll-anim 2s infinite;
+}
+@keyframes scroll-anim {
+  0% { top: 5px; opacity: 1; }
+  100% { top: 16px; opacity: 0; }
+}
+
+/* ===== DIVIDER ===== */
+.ci-divider {
+  height: 6px;
+  background: linear-gradient(90deg, var(--ci-orange) 33.33%, white 33.33%, white 66.66%, var(--ci-green) 66.66%);
+  width: 100%;
+}
+
+/* ===== PALETTE SECTION ===== */
+.palette-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.color-swatch {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  transition: transform 0.25s, box-shadow 0.25s;
+  cursor: pointer;
+}
+.color-swatch:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+
+.swatch-color {
+  height: 120px;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  padding: 0.75rem;
+}
+.swatch-color::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.15));
+}
+
+.swatch-check {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.5);
+  position: relative;
+  z-index: 1;
+}
+
+.swatch-info {
+  background: white;
+  padding: 0.9rem 1rem;
+}
+.swatch-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--neutral-800);
+  margin-bottom: 0.2rem;
+}
+.swatch-hex {
+  font-family: 'Courier New', monospace;
+  font-size: 0.78rem;
+  color: var(--neutral-500);
+  letter-spacing: 0.05em;
+}
+.swatch-role {
+  font-size: 0.72rem;
+  color: var(--neutral-400);
+  margin-top: 0.2rem;
+}
+
+/* ===== TYPOGRAPHY ===== */
+.type-showcase {
+  background: white;
+  border-radius: var(--radius-xl);
+  padding: 3rem;
+  box-shadow: var(--shadow-md);
+  margin-bottom: 2rem;
+}
+
+.type-row {
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--neutral-100);
+}
+.type-row:last-child { border-bottom: none; }
+
+.type-meta {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--neutral-400);
+  margin-bottom: 0.5rem;
+}
+
+.t-display { font-family: var(--font-display); font-size: 3.5rem; font-weight: 900; color: var(--neutral-900); letter-spacing: -0.04em; line-height: 1.1; }
+.t-h1 { font-family: var(--font-display); font-size: 2.5rem; font-weight: 800; color: var(--neutral-900); letter-spacing: -0.03em; }
+.t-h2 { font-family: var(--font-display); font-size: 1.75rem; font-weight: 700; color: var(--neutral-800); letter-spacing: -0.02em; }
+.t-h3 { font-family: var(--font-display); font-size: 1.25rem; font-weight: 600; color: var(--neutral-800); }
+.t-body { font-family: var(--font-body); font-size: 1rem; color: var(--neutral-700); line-height: 1.7; }
+.t-small { font-family: var(--font-body); font-size: 0.85rem; color: var(--neutral-500); line-height: 1.6; }
+.t-label { font-family: var(--font-body); font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ci-orange-dark); }
+
+/* ===== COMPONENTS ===== */
+.components-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+@media(max-width: 768px) { .components-grid { grid-template-columns: 1fr; } }
+
+.comp-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  box-shadow: var(--shadow-md);
+}
+
+.comp-title {
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--neutral-400);
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--neutral-100);
+}
+
+/* BUTTONS */
+.btn-showcase { display: flex; flex-direction: column; gap: 0.75rem; }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.5rem;
+  border-radius: var(--radius-full);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  letter-spacing: 0.01em;
+  text-decoration: none;
+}
+.btn:hover { transform: translateY(-2px); }
+.btn:active { transform: scale(0.97); }
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--ci-orange), var(--ci-orange-dark));
+  color: white;
+  box-shadow: 0 4px 16px rgba(244,121,32,0.35);
+}
+.btn-primary:hover { box-shadow: var(--shadow-orange); }
+
+.btn-secondary {
+  background: linear-gradient(135deg, var(--ci-green), var(--ci-green-dark));
+  color: white;
+  box-shadow: 0 4px 16px rgba(0,133,63,0.3);
+}
+.btn-secondary:hover { box-shadow: var(--shadow-green); }
+
+.btn-outline-orange {
+  background: transparent;
+  color: var(--ci-orange);
+  border: 2px solid var(--ci-orange);
+}
+.btn-outline-orange:hover { background: var(--ci-orange-pale); }
+
+.btn-outline-green {
+  background: transparent;
+  color: var(--ci-green);
+  border: 2px solid var(--ci-green);
+}
+.btn-outline-green:hover { background: var(--ci-green-pale); }
+
+.btn-ghost {
+  background: var(--neutral-100);
+  color: var(--neutral-700);
+}
+.btn-ghost:hover { background: var(--neutral-200); }
+
+.btn-danger {
+  background: linear-gradient(135deg, #EF4444, #DC2626);
+  color: white;
+  box-shadow: 0 4px 16px rgba(239,68,68,0.3);
+}
+
+.btn-sm { padding: 0.45rem 1rem; font-size: 0.78rem; }
+.btn-lg { padding: 0.9rem 2rem; font-size: 1rem; }
+
+/* BADGES / STATUTS */
+.badge-row { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.85rem;
+  border-radius: var(--radius-full);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.badge::before {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%;
+}
+.badge-courrier { background: #EFF6FF; color: #1D4ED8; }
+.badge-courrier::before { background: #1D4ED8; }
+.badge-spfei { background: var(--ci-orange-pale); color: var(--ci-orange-dark); }
+.badge-spfei::before { background: var(--ci-orange); }
+.badge-scvaa { background: var(--ci-green-pale); color: var(--ci-green-dark); }
+.badge-scvaa::before { background: var(--ci-green); }
+.badge-nonconforme { background: #FEF2F2; color: #DC2626; }
+.badge-nonconforme::before { background: #EF4444; }
+.badge-termine { background: #F0FDF4; color: #15803D; border: 1px solid #86EFAC; }
+.badge-termine::before { background: #22C55E; }
+.badge-conservation { background: #F5F3FF; color: #6D28D9; }
+.badge-conservation::before { background: #8B5CF6; }
+
+/* INPUTS */
+.input-showcase { display: flex; flex-direction: column; gap: 1rem; }
+.input-group { display: flex; flex-direction: column; gap: 0.4rem; }
+.input-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--neutral-700);
+  letter-spacing: 0.02em;
+}
+.input-label span { color: var(--ci-orange); }
+.input-field {
+  padding: 0.7rem 1rem;
+  border: 2px solid var(--neutral-200);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--neutral-800);
+  background: white;
+  transition: all 0.2s;
+  outline: none;
+  width: 100%;
+}
+.input-field:focus { border-color: var(--ci-orange); box-shadow: 0 0 0 4px var(--ci-orange-pale); }
+.input-field.success { border-color: var(--ci-green); }
+.input-field.success:focus { box-shadow: 0 0 0 4px var(--ci-green-pale); }
+.input-field.error { border-color: #EF4444; }
+.input-field.error:focus { box-shadow: 0 0 0 4px #FEF2F2; }
+.input-hint { font-size: 0.72rem; color: var(--neutral-400); }
+.input-hint.err { color: #EF4444; }
+
+/* CARDS */
+.card-showcase { display: flex; flex-direction: column; gap: 1rem; }
+
+.dos-card {
+  background: white;
+  border-radius: var(--radius-md);
+  padding: 1.25rem 1.5rem;
+  box-shadow: var(--shadow-sm);
+  border-left: 4px solid var(--ci-orange);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.25s;
+  cursor: pointer;
+}
+.dos-card:hover { box-shadow: var(--shadow-md); transform: translateX(4px); border-left-width: 6px; }
+.dos-card.green { border-left-color: var(--ci-green); }
+.dos-card.blue { border-left-color: #3B82F6; }
+
+.dos-card-left { display: flex; align-items: center; gap: 1rem; }
+.dos-card-icon {
+  width: 42px; height: 42px;
+  border-radius: var(--radius-sm);
+  background: var(--ci-orange-pale);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+.dos-card.green .dos-card-icon { background: var(--ci-green-pale); }
+.dos-card.blue .dos-card-icon { background: #EFF6FF; }
+.dos-card-num { font-family: var(--font-display); font-weight: 700; font-size: 0.95rem; color: var(--neutral-800); }
+.dos-card-name { font-size: 0.8rem; color: var(--neutral-500); }
+
+/* ALERTS */
+.alert-showcase { display: flex; flex-direction: column; gap: 0.75rem; }
+.alert {
+  padding: 0.85rem 1.2rem;
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  font-weight: 500;
+}
+.alert-icon { font-size: 1rem; flex-shrink: 0; margin-top: 0.05rem; }
+.alert-success { background: var(--ci-green-pale); color: var(--ci-green-dark); border: 1px solid #A7F3D0; }
+.alert-warning { background: var(--ci-orange-pale); color: var(--ci-orange-dark); border: 1px solid #FCD9BD; }
+.alert-error { background: #FEF2F2; color: #991B1B; border: 1px solid #FECACA; }
+.alert-info { background: #EFF6FF; color: #1E40AF; border: 1px solid #BFDBFE; }
+
+/* ===== WORKFLOW PREVIEW ===== */
+.workflow-section {
+  background: white;
+  border-radius: var(--radius-xl);
+  padding: 3rem;
+  box-shadow: var(--shadow-md);
+}
+
+.workflow-steps {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  overflow-x: auto;
+  padding: 1.5rem 0;
+}
+
+.wf-step {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.wf-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 110px;
+}
+
+.wf-circle {
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 700;
+  position: relative;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+.wf-circle:hover { transform: scale(1.1); }
+
+.wf-circle.done {
+  background: linear-gradient(135deg, var(--ci-green), var(--ci-green-dark));
+  color: white;
+  box-shadow: 0 4px 16px rgba(0,133,63,0.35);
+}
+.wf-circle.active {
+  background: linear-gradient(135deg, var(--ci-orange), var(--ci-orange-dark));
+  color: white;
+  box-shadow: 0 4px 20px rgba(244,121,32,0.45);
+  animation: pulse-step 2s infinite;
+}
+.wf-circle.pending {
+  background: var(--neutral-100);
+  color: var(--neutral-400);
+  border: 2px solid var(--neutral-200);
+}
+
+@keyframes pulse-step {
+  0%, 100% { box-shadow: 0 4px 20px rgba(244,121,32,0.45); }
+  50% { box-shadow: 0 4px 30px rgba(244,121,32,0.7), 0 0 0 8px rgba(244,121,32,0.1); }
+}
+
+.wf-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--neutral-500);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  max-width: 90px;
+  line-height: 1.3;
+}
+.wf-circle.done + .wf-label,
+.wf-circle.active ~ .wf-label { color: var(--neutral-700); }
+
+.wf-arrow {
+  width: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 28px;
+}
+.wf-arrow-line {
+  height: 2px;
+  flex: 1;
+  transition: background 0.3s;
+}
+.wf-arrow.done-arrow .wf-arrow-line { background: var(--ci-green); }
+.wf-arrow.active-arrow .wf-arrow-line { background: linear-gradient(90deg, var(--ci-green), var(--ci-orange)); }
+.wf-arrow.pending-arrow .wf-arrow-line { background: var(--neutral-200); }
+
+/* ===== LOGO VARIATIONS ===== */
+.logo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.logo-variant {
+  border-radius: var(--radius-lg);
+  padding: 2.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  box-shadow: var(--shadow-md);
+  transition: transform 0.25s;
+}
+.logo-variant:hover { transform: translateY(-4px); }
+
+.logo-variant-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.5;
+  margin-top: 0.5rem;
+}
+
+/* Logo mark SVG inline */
+.logo-mark {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.logo-icon-wrap {
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.logo-name-block { display: flex; flex-direction: column; }
+.logo-name-main {
+  font-family: var(--font-display);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+.logo-name-sub {
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.55;
+  margin-top: 0.2rem;
+}
+
+/* ===== SPACING SECTION ===== */
+.spacing-row {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--neutral-100);
+}
+.spacing-box {
+  background: linear-gradient(135deg, var(--ci-orange-pale), var(--ci-green-pale));
+  border: 1px dashed var(--ci-orange);
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+.spacing-info { font-size: 0.85rem; color: var(--neutral-700); }
+.spacing-val { font-family: 'Courier New', monospace; font-weight: 600; color: var(--ci-orange-dark); }
+
+/* ===== ICONS SECTION ===== */
+.icon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 1rem;
+}
+.icon-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 0.5rem;
+  border-radius: var(--radius-md);
+  background: white;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s;
+  cursor: pointer;
+}
+.icon-item:hover { background: var(--ci-orange-pale); transform: translateY(-3px); box-shadow: var(--shadow-md); }
+.icon-item .ico { font-size: 1.6rem; }
+.icon-item .ico-name { font-size: 0.65rem; color: var(--neutral-500); text-align: center; font-weight: 600; }
+
+/* ===== SCREEN PREVIEW ===== */
+.screen-preview {
+  background: var(--neutral-900);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg), 0 0 0 1px rgba(255,255,255,0.05);
+  margin-bottom: 2rem;
+}
+
+.screen-bar {
+  background: rgba(255,255,255,0.05);
+  padding: 0.7rem 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.screen-dot { width: 10px; height: 10px; border-radius: 50%; }
+.sd-red { background: #FF5F56; }
+.sd-yellow { background: #FFBD2E; }
+.sd-green { background: #27C93F; }
+.screen-url {
+  flex: 1;
+  background: rgba(255,255,255,0.07);
+  border-radius: 6px;
+  padding: 0.2rem 0.75rem;
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.4);
+  font-family: 'Courier New', monospace;
+  margin: 0 1rem;
+}
+
+.screen-body {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  min-height: 420px;
+}
+
+.screen-sidebar {
+  background: #0F1923;
+  padding: 1.5rem 0;
+  border-right: 1px solid rgba(255,255,255,0.05);
+}
+
+.screen-logo-area {
+  padding: 0 1.2rem 1.5rem;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+.screen-logo-icon {
+  width: 32px; height: 32px;
+  background: linear-gradient(135deg, var(--ci-orange), var(--ci-orange-dark));
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.9rem;
+}
+.screen-logo-name {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 800;
+  color: white;
+  letter-spacing: -0.02em;
+}
+.screen-logo-name .sln-t { color: var(--ci-orange); }
+
+.screen-nav-label {
+  padding: 0 1.2rem;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.25);
+  margin-bottom: 0.4rem;
+}
+
+.screen-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55rem 1.2rem;
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.5);
+  border-left: 2px solid transparent;
+  margin-bottom: 0.15rem;
+}
+.screen-nav-item.active {
+  background: rgba(244,121,32,0.1);
+  color: var(--ci-orange);
+  border-left-color: var(--ci-orange);
+  font-weight: 600;
+}
+
+.screen-main {
+  background: #F8FAFC;
+  padding: 1.5rem;
+}
+
+.screen-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.2rem;
+}
+.screen-page-title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--neutral-900);
+  letter-spacing: -0.02em;
+}
+.screen-add-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.9rem;
+  background: linear-gradient(135deg, var(--ci-orange), var(--ci-orange-dark));
+  color: white;
+  border-radius: var(--radius-full);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.screen-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1.2rem;
+}
+
+.screen-stat {
+  background: white;
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+  box-shadow: var(--shadow-sm);
+}
+.screen-stat-val {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--neutral-900);
+  line-height: 1;
+}
+.screen-stat-lbl { font-size: 0.65rem; color: var(--neutral-400); margin-top: 0.2rem; font-weight: 600; }
+.screen-stat-bar { height: 3px; border-radius: 2px; margin-top: 0.5rem; }
+
+.screen-table-header {
+  display: grid;
+  grid-template-columns: 1.5fr 1.5fr 1fr 0.8fr 0.6fr;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--neutral-100);
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--neutral-400);
+}
+
+.screen-table-row {
+  display: grid;
+  grid-template-columns: 1.5fr 1.5fr 1fr 0.8fr 0.6fr;
+  gap: 0.5rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.72rem;
+  color: var(--neutral-700);
+  align-items: center;
+  margin-bottom: 0.25rem;
+  background: white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.screen-table-row:hover { background: var(--ci-orange-pale); }
+
+.mini-badge {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 20px;
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.mb-orange { background: var(--ci-orange-pale); color: var(--ci-orange-dark); }
+.mb-green { background: var(--ci-green-pale); color: var(--ci-green-dark); }
+.mb-red { background: #FEF2F2; color: #991B1B; }
+.mb-blue { background: #EFF6FF; color: #1D4ED8; }
+
+/* ===== FOOTER ===== */
+footer {
+  background: var(--neutral-900);
+  color: rgba(255,255,255,0.5);
+  text-align: center;
+  padding: 3rem 2rem;
+  font-size: 0.85rem;
+}
+footer .footer-logo {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: white;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.5rem;
+}
+footer .footer-logo span { color: var(--ci-orange); }
+
+.ci-flag-footer {
+  display: inline-flex;
+  gap: 0;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+.ci-flag-footer span { display: block; width: 20px; height: 12px; }
+</style>
+</head>
+<body>
+
+<div class="scroll-indicator" id="scrollBar"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <div class="nav-logo-icon">🗺️</div>
+    <div class="nav-logo-text">Dos<span>Tracker</span></div>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#palette">Palette</a></li>
+    <li><a href="#typo">Typographie</a></li>
+    <li><a href="#logo">Logo</a></li>
+    <li><a href="#components">Composants</a></li>
+    <li><a href="#preview">Aperçu</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg-shapes"></div>
+  <div class="hero-stripes">
+    <div></div><div></div><div></div>
+  </div>
+
+  <div class="hero-content">
+    <div style="display:flex;align-items:center;justify-content:center;gap:0.75rem;margin-bottom:1.5rem;">
+      <div class="ci-flag-badge">
+        <span class="f-or"></span>
+        <span class="f-wh"></span>
+        <span class="f-gr"></span>
+      </div>
+      <span class="ci-flag-label">Inspiré des couleurs de la Côte d'Ivoire</span>
+    </div>
+
+    <div class="big-logo">
+      <div class="big-logo-icon">
+        <svg class="logo-svg" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Map territory shape -->
+          <path d="M26 6C15 6 8 14 8 24C8 34 16 42 26 46C36 42 44 34 44 24C44 14 37 6 26 6Z" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+          <!-- Folder icon inside -->
+          <rect x="16" y="21" width="20" height="14" rx="3" fill="white" opacity="0.9"/>
+          <path d="M16 24H32" stroke="rgba(244,121,32,0.6)" stroke-width="1.5"/>
+          <rect x="16" y="18" width="10" height="5" rx="2" fill="white" opacity="0.7"/>
+          <!-- Location pin -->
+          <circle cx="26" cy="27" r="3" fill="var(--ci-orange)" opacity="0.9"/>
+          <path d="M26 30L26 34" stroke="rgba(244,121,32,0.7)" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="big-logo-text">
+        <div class="big-logo-name"><span class="dos">Dos</span><span class="tracker">Tracker</span></div>
+        <div class="big-logo-tagline">Gestion Foncière Numérique · Côte d'Ivoire</div>
+      </div>
+    </div>
+
+    <h1 class="hero-title">
+      Charte Graphique Officielle<br>
+      <em>DosTracker</em> — <strong>Moderne, Ancré, Ivoirien</strong>
+    </h1>
+    <p class="hero-sub">Guide complet de l'identité visuelle : palette, typographie, logo, composants UI et aperçu de l'interface.</p>
+  </div>
+
+  <div class="scroll-hint">
+    <div class="scroll-dot"></div>
+    <span>Défiler</span>
+  </div>
+</div>
+
+<div class="ci-divider"></div>
+
+<!-- ===== PALETTE ===== -->
+<section id="palette">
+  <div class="section-label">01 · Identité Chromatique</div>
+  <h2 class="section-title">La Palette <span>DosTracker</span></h2>
+  <p class="section-sub">Blanc dominant pour la clarté professionnelle, orange vibrant pour l'énergie et l'action, vert profond pour la confiance — les trois couleurs de la Côte d'Ivoire sublimées en système de design moderne.</p>
+
+  <div class="palette-grid">
+    <div class="color-swatch" onclick="copyColor(this, '#F47920')">
+      <div class="swatch-color" style="background: linear-gradient(135deg, #F47920, #C85E08);">
+        <div class="swatch-check" style="background:rgba(255,255,255,0.2);"></div>
+      </div>
+      <div class="swatch-info">
+        <div class="swatch-name">CI Orange</div>
+        <div class="swatch-hex">#F47920</div>
+        <div class="swatch-role">Couleur primaire · Actions · CTAs</div>
+      </div>
+    </div>
+    <div class="color-swatch" onclick="copyColor(this, '#F9A05A')">
+      <div class="swatch-color" style="background: #F9A05A;">
+        <div class="swatch-check"></div>
+      </div>
+      <div class="swatch-info">
+        <div class="swatch-name">Orange Clair</div>
+        <div class="swatch-hex">#F9A05A</div>
+        <div class="swatch-role">Hover states · Accents doux</div>
+      </div>
+    </div>
+    <div class="color-swatch" onclick="copyColor(this, '#FEF0E4')">
+      <div class="swatch-color" style="background: #FEF0E4; border: 1px solid #FCD9BD;">
+        <div class="swatch-check" style="border-color: #FCD9BD;"></div>
+      </div>
+      <div class="swatch-info">
+        <div class="swatch-name">Orange Pâle</div>
+        <div class="swatch-hex">#FEF0E4</div>
+        <div class="swatch-role">Fonds · Alertes warning</div>
+      </div>
+    </div>
+    <div class="color-swatch" onclick="copyColor(this, '#00853F')">
+      <div class="swatch-color" style="background: linear-gradient(135deg, #00853F, #005C2B);">
+        <div class="swatch-check" style="background:rgba(255,255,255,0.2);"></div>
+      </div>
+      <div class="swatch-info">
+        <div class="swatch-name">CI Vert</div>
+        <div class="swatch-hex">#00853F</div>
+        <div class="swatch-role">Succès · Validation · Conforme</div>
+      </div>
+    </div>
+    <div class="color-swatch" onclick="copyColor(this, '#43B074')">
+      <div class="swatch-color" style="background: #43B074;">
+        <div class="swatch-check"></div>
+      </div>
+      <div class="swatch-info">
+        <div class="swatch-name">Vert Clair</div>
+        <div class="swatch-hex">#43B074</div>
+        <div class="swatch-role">Hover success · Badges</div>
+      </div>
+    </div>
+    <div class="color-swatch" onclick="copyColor(this, '#E4F5EC')">
+      <div class="swatch-color" style="background: #E4F5EC; border: 1px solid #A7F3D0;">
+        <div class="swatch-check" style="border-color: #A7F3D0;"></div>
+      </div>
+      <div class="swatch-info">
+        <div class="swatch-name">Vert Pâle</div>
+        <div class="swatch-hex">#E4F5EC</div>
+        <div class="swatch-role">Fonds success · Alertes</div>
+      </div>
+    </div>
+    <div class="color-swatch" onclick="copyColor(this, '#FFFFFF')">
+      <div class="swatch-color" style="background: #FFFFFF; border: 1px solid #E2E8F0;">
+        <div class="swatch-check" style="border-color: #E2E8F0;"></div>
+      </div>
+      <div class="swatch-info">
+        <div class="swatch-name">Blanc Pur</div>
+        <div class="swatch-hex">#FFFFFF</div>
+        <div class="swatch-role">Fond principal · Cartes · Surfaces</div>
+      </div>
+    </div>
+    <div class="color-swatch" onclick="copyColor(this, '#0F1923')">
+      <div class="swatch-color" style="background: linear-gradient(135deg, #0F1923, #1C2B3A);">
+        <div class="swatch-check" style="background:rgba(255,255,255,0.15);"></div>
+      </div>
+      <div class="swatch-info">
+        <div class="swatch-name">Noir Profond</div>
+        <div class="swatch-hex">#0F1923</div>
+        <div class="swatch-role">Sidebar · Textes titres · Header</div>
+      </div>
+    </div>
+    <div class="color-swatch" onclick="copyColor(this, '#64748B')">
+      <div class="swatch-color" style="background: #64748B;">
+        <div class="swatch-check"></div>
+      </div>
+      <div class="swatch-info">
+        <div class="swatch-name">Gris Neutre</div>
+        <div class="swatch-hex">#64748B</div>
+        <div class="swatch-role">Textes secondaires · Labels</div>
+      </div>
+    </div>
+    <div class="color-swatch" onclick="copyColor(this, '#EF4444')">
+      <div class="swatch-color" style="background: linear-gradient(135deg, #EF4444, #DC2626);">
+        <div class="swatch-check" style="background:rgba(255,255,255,0.2);"></div>
+      </div>
+      <div class="swatch-info">
+        <div class="swatch-name">Rouge Erreur</div>
+        <div class="swatch-hex">#EF4444</div>
+        <div class="swatch-role">Non-conforme · Erreurs · Danger</div>
+      </div>
+    </div>
+    <div class="color-swatch" onclick="copyColor(this, '#3B82F6')">
+      <div class="swatch-color" style="background: linear-gradient(135deg, #3B82F6, #1D4ED8);">
+        <div class="swatch-check" style="background:rgba(255,255,255,0.2);"></div>
+      </div>
+      <div class="swatch-info">
+        <div class="swatch-name">Bleu Info</div>
+        <div class="swatch-hex">#3B82F6</div>
+        <div class="swatch-role">Service Courrier · Informations</div>
+      </div>
+    </div>
+    <div class="color-swatch" onclick="copyColor(this, '#8B5CF6')">
+      <div class="swatch-color" style="background: linear-gradient(135deg, #8B5CF6, #6D28D9);">
+        <div class="swatch-check" style="background:rgba(255,255,255,0.2);"></div>
+      </div>
+      <div class="swatch-info">
+        <div class="swatch-name">Violet</div>
+        <div class="swatch-hex">#8B5CF6</div>
+        <div class="swatch-role">Conservation Foncière · Final</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COULEURS PAR SERVICE -->
+  <div class="section-label green">Couleurs des Services</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;margin-top:1rem;">
+    <div style="background:white;border-radius:var(--radius-md);padding:1.2rem;box-shadow:var(--shadow-sm);border-top:4px solid #3B82F6;">
+      <div style="font-family:var(--font-display);font-weight:700;font-size:0.85rem;color:#1D4ED8;margin-bottom:0.3rem;">SERVICE COURRIER</div>
+      <div style="font-family:'Courier New',monospace;font-size:0.78rem;color:var(--neutral-500);">#3B82F6 · Bleu</div>
+    </div>
+    <div style="background:white;border-radius:var(--radius-md);padding:1.2rem;box-shadow:var(--shadow-sm);border-top:4px solid #F47920;">
+      <div style="font-family:var(--font-display);font-weight:700;font-size:0.85rem;color:var(--ci-orange-dark);margin-bottom:0.3rem;">SERVICE SPFEI</div>
+      <div style="font-family:'Courier New',monospace;font-size:0.78rem;color:var(--neutral-500);">#F47920 · Orange CI</div>
+    </div>
+    <div style="background:white;border-radius:var(--radius-md);padding:1.2rem;box-shadow:var(--shadow-sm);border-top:4px solid #00853F;">
+      <div style="font-family:var(--font-display);font-weight:700;font-size:0.85rem;color:var(--ci-green-dark);margin-bottom:0.3rem;">SERVICE SCVAA</div>
+      <div style="font-family:'Courier New',monospace;font-size:0.78rem;color:var(--neutral-500);">#00853F · Vert CI</div>
+    </div>
+    <div style="background:white;border-radius:var(--radius-md);padding:1.2rem;box-shadow:var(--shadow-sm);border-top:4px solid #8B5CF6;">
+      <div style="font-family:var(--font-display);font-weight:700;font-size:0.85rem;color:#6D28D9;margin-bottom:0.3rem;">CONSERVATION</div>
+      <div style="font-family:'Courier New',monospace;font-size:0.78rem;color:var(--neutral-500);">#8B5CF6 · Violet</div>
+    </div>
+  </div>
+</section>
+
+<div class="ci-divider"></div>
+
+<!-- ===== TYPOGRAPHIE ===== -->
+<section id="typo">
+  <div class="section-label">02 · Typographie</div>
+  <h2 class="section-title">Le Système <span>Typographique</span></h2>
+  <p class="section-sub">Deux familles soigneusement choisies : <strong>Outfit</strong> pour les titres (moderne, dynamique, fort) et <strong>Nunito</strong> pour le corps de texte (lisible, chaleureux, accessible).</p>
+
+  <div class="type-showcase">
+    <div class="type-row">
+      <div class="type-meta">Display · Outfit 900 · 56px</div>
+      <div class="t-display">DosTracker</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">H1 · Outfit 800 · 40px</div>
+      <div class="t-h1">Tableau de Bord Foncier</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">H2 · Outfit 700 · 28px</div>
+      <div class="t-h2">Service SPFEI — Contrôle Administratif</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">H3 · Outfit 600 · 20px</div>
+      <div class="t-h3">Dossier N° DF-2025-001 — Région Abidjan</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">Body · Nunito 400 · 16px · line-height 1.7</div>
+      <div class="t-body">Le dossier foncier a été enregistré au service courrier le 15 janvier 2025. Il a ensuite été transmis au SERVICE SPFEI pour contrôle administratif. Toutes les informations ont été complétées avec succès.</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">Small · Nunito 400 · 13.6px</div>
+      <div class="t-small">Dernière mise à jour : 15/01/2025 à 14h32 — Agent : KONE Moussa</div>
+    </div>
+    <div class="type-row" style="border-bottom:none;">
+      <div class="type-meta">Label · Nunito 700 · 11.5px · UPPERCASE</div>
+      <div class="t-label">STATUT DU DOSSIER · REGION ABIDJAN</div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
+    <div style="background:white;border-radius:var(--radius-lg);padding:2rem;box-shadow:var(--shadow-sm);">
+      <div class="comp-title">Outfit — Titres & Display</div>
+      <div style="font-family:'Outfit',sans-serif;">
+        <div style="font-size:2rem;font-weight:900;color:var(--neutral-900);letter-spacing:-0.04em;">Aa Bb Cc Dd</div>
+        <div style="font-size:1rem;font-weight:400;color:var(--neutral-500);margin-top:0.5rem;">ABCDEFGHIJKLMNOPQRSTUVWXYZ</div>
+        <div style="font-size:1rem;font-weight:400;color:var(--neutral-500);">abcdefghijklmnopqrstuvwxyz</div>
+        <div style="font-size:1rem;font-weight:400;color:var(--neutral-500);">0123456789 !@#$%&</div>
+        <div style="margin-top:1rem;font-size:0.75rem;color:var(--neutral-400);font-weight:600;letter-spacing:0.05em;">POIDS : 300 · 400 · 500 · 600 · 700 · 800 · 900</div>
+      </div>
+    </div>
+    <div style="background:white;border-radius:var(--radius-lg);padding:2rem;box-shadow:var(--shadow-sm);">
+      <div class="comp-title">Nunito — Corps de texte</div>
+      <div style="font-family:'Nunito',sans-serif;">
+        <div style="font-size:2rem;font-weight:800;color:var(--neutral-900);">Aa Bb Cc Dd</div>
+        <div style="font-size:1rem;font-weight:400;color:var(--neutral-500);margin-top:0.5rem;">ABCDEFGHIJKLMNOPQRSTUVWXYZ</div>
+        <div style="font-size:1rem;font-weight:400;color:var(--neutral-500);">abcdefghijklmnopqrstuvwxyz</div>
+        <div style="font-size:1rem;font-weight:400;color:var(--neutral-500);">0123456789 !@#$%&</div>
+        <div style="margin-top:1rem;font-size:0.75rem;color:var(--neutral-400);font-weight:600;letter-spacing:0.05em;">POIDS : 400 · 500 · 600 · 700 · 800</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="ci-divider"></div>
+
+<!-- ===== LOGO ===== -->
+<section id="logo">
+  <div class="section-label">03 · Identité Visuelle</div>
+  <h2 class="section-title">Le Logo <span>DosTracker</span></h2>
+  <p class="section-sub">L'icône combine une carte stylisée (territoire ivoirien) avec un dossier et un pin de localisation — symbolisant la gestion foncière numérique sur le territoire.</p>
+
+  <div class="logo-grid">
+    <!-- Version Fond Sombre -->
+    <div class="logo-variant" style="background: var(--neutral-900);">
+      <div class="logo-mark">
+        <div class="logo-icon-wrap" style="width:56px;height:56px;background:linear-gradient(145deg,#F47920,#C85E08);box-shadow:0 8px 24px rgba(244,121,32,0.4);">
+          <svg width="32" height="32" viewBox="0 0 52 52" fill="none">
+            <path d="M26 6C15 6 8 14 8 24C8 34 16 42 26 46C36 42 44 34 44 24C44 14 37 6 26 6Z" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/>
+            <rect x="16" y="21" width="20" height="14" rx="3" fill="white" opacity="0.9"/>
+            <path d="M16 24H36" stroke="rgba(244,121,32,0.5)" stroke-width="1.5"/>
+            <rect x="16" y="18" width="10" height="5" rx="2" fill="white" opacity="0.7"/>
+            <circle cx="26" cy="28" r="3" fill="#F47920"/>
+          </svg>
+        </div>
+        <div class="logo-name-block">
+          <div class="logo-name-main" style="font-size:1.6rem;color:white;">Dos<span style="color:#F47920;">Tracker</span></div>
+          <div class="logo-name-sub" style="color:rgba(255,255,255,0.4);">Gestion Foncière · CI</div>
+        </div>
+      </div>
+      <div class="logo-variant-label" style="color:rgba(255,255,255,0.3);">Version Fond Sombre</div>
+    </div>
+
+    <!-- Version Fond Blanc -->
+    <div class="logo-variant" style="background: white; border: 1px solid var(--neutral-100);">
+      <div class="logo-mark">
+        <div class="logo-icon-wrap" style="width:56px;height:56px;background:linear-gradient(145deg,#F47920,#C85E08);box-shadow:0 8px 24px rgba(244,121,32,0.3);">
+          <svg width="32" height="32" viewBox="0 0 52 52" fill="none">
+            <path d="M26 6C15 6 8 14 8 24C8 34 16 42 26 46C36 42 44 34 44 24C44 14 37 6 26 6Z" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/>
+            <rect x="16" y="21" width="20" height="14" rx="3" fill="white" opacity="0.9"/>
+            <path d="M16 24H36" stroke="rgba(244,121,32,0.5)" stroke-width="1.5"/>
+            <rect x="16" y="18" width="10" height="5" rx="2" fill="white" opacity="0.7"/>
+            <circle cx="26" cy="28" r="3" fill="#F47920"/>
+          </svg>
+        </div>
+        <div class="logo-name-block">
+          <div class="logo-name-main" style="font-size:1.6rem;color:#0F1923;">Dos<span style="color:#F47920;">Tracker</span></div>
+          <div class="logo-name-sub" style="color:var(--neutral-400);">Gestion Foncière · CI</div>
+        </div>
+      </div>
+      <div class="logo-variant-label" style="color:var(--neutral-400);">Version Fond Blanc (principale)</div>
+    </div>
+
+    <!-- Version Fond Orange -->
+    <div class="logo-variant" style="background: linear-gradient(135deg, #F47920, #C85E08);">
+      <div class="logo-mark">
+        <div class="logo-icon-wrap" style="width:56px;height:56px;background:rgba(255,255,255,0.2);border:1.5px solid rgba(255,255,255,0.3);">
+          <svg width="32" height="32" viewBox="0 0 52 52" fill="none">
+            <path d="M26 6C15 6 8 14 8 24C8 34 16 42 26 46C36 42 44 34 44 24C44 14 37 6 26 6Z" fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/>
+            <rect x="16" y="21" width="20" height="14" rx="3" fill="white"/>
+            <path d="M16 24H36" stroke="rgba(244,121,32,0.4)" stroke-width="1.5"/>
+            <rect x="16" y="18" width="10" height="5" rx="2" fill="white" opacity="0.8"/>
+            <circle cx="26" cy="28" r="3" fill="#F47920"/>
+          </svg>
+        </div>
+        <div class="logo-name-block">
+          <div class="logo-name-main" style="font-size:1.6rem;color:white;">Dos<span style="color:rgba(255,255,255,0.75);">Tracker</span></div>
+          <div class="logo-name-sub" style="color:rgba(255,255,255,0.6);">Gestion Foncière · CI</div>
+        </div>
+      </div>
+      <div class="logo-variant-label" style="color:rgba(255,255,255,0.5);">Version Fond Orange</div>
+    </div>
+
+    <!-- Icône seule -->
+    <div class="logo-variant" style="background: var(--neutral-100);">
+      <div style="display:flex;gap:1.5rem;align-items:center;justify-content:center;">
+        <div style="width:72px;height:72px;background:linear-gradient(145deg,#F47920,#C85E08);border-radius:20px;display:flex;align-items:center;justify-content:center;box-shadow:0 12px 32px rgba(244,121,32,0.35);">
+          <svg width="42" height="42" viewBox="0 0 52 52" fill="none">
+            <path d="M26 6C15 6 8 14 8 24C8 34 16 42 26 46C36 42 44 34 44 24C44 14 37 6 26 6Z" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/>
+            <rect x="16" y="21" width="20" height="14" rx="3" fill="white" opacity="0.9"/>
+            <path d="M16 24H36" stroke="rgba(244,121,32,0.5)" stroke-width="1.5"/>
+            <rect x="16" y="18" width="10" height="5" rx="2" fill="white" opacity="0.7"/>
+            <circle cx="26" cy="28" r="3" fill="#F47920"/>
+          </svg>
+        </div>
+        <div style="width:52px;height:52px;background:linear-gradient(145deg,#F47920,#C85E08);border-radius:14px;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(244,121,32,0.3);">
+          <svg width="30" height="30" viewBox="0 0 52 52" fill="none">
+            <path d="M26 6C15 6 8 14 8 24C8 34 16 42 26 46C36 42 44 34 44 24C44 14 37 6 26 6Z" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/>
+            <rect x="16" y="21" width="20" height="14" rx="3" fill="white" opacity="0.9"/>
+            <circle cx="26" cy="28" r="3" fill="#F47920"/>
+          </svg>
+        </div>
+        <div style="width:36px;height:36px;background:linear-gradient(145deg,#F47920,#C85E08);border-radius:10px;display:flex;align-items:center;justify-content:center;">
+          <svg width="22" height="22" viewBox="0 0 52 52" fill="none">
+            <path d="M26 6C15 6 8 14 8 24C8 34 16 42 26 46C36 42 44 34 44 24C44 14 37 6 26 6Z" fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.6)" stroke-width="2"/>
+            <rect x="16" y="20" width="20" height="14" rx="3" fill="white" opacity="0.9"/>
+            <circle cx="26" cy="27" r="3" fill="#F47920"/>
+          </svg>
+        </div>
+      </div>
+      <div class="logo-variant-label" style="color:var(--neutral-500);">Icône seule — 72px · 52px · 36px</div>
+    </div>
+  </div>
+</section>
+
+<div class="ci-divider"></div>
+
+<!-- ===== COMPONENTS ===== -->
+<section id="components">
+  <div class="section-label">04 · Composants UI</div>
+  <h2 class="section-title">Bibliothèque de <span>Composants</span></h2>
+  <p class="section-sub">Tous les éléments d'interface réutilisables dans l'application DosTracker — boutons, badges de statut, formulaires et cartes.</p>
+
+  <div class="components-grid">
+
+    <!-- BOUTONS -->
+    <div class="comp-card">
+      <div class="comp-title">Boutons</div>
+      <div class="btn-showcase">
+        <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
+          <button class="btn btn-primary">➕ Nouveau Dossier</button>
+          <button class="btn btn-secondary">✓ Valider</button>
+        </div>
+        <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
+          <button class="btn btn-outline-orange">↗ Envoyer au SPFEI</button>
+          <button class="btn btn-outline-green">📤 Envoyer au SCVAA</button>
+        </div>
+        <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
+          <button class="btn btn-ghost">Annuler</button>
+          <button class="btn btn-danger">✕ Non Conforme</button>
+        </div>
+        <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;">
+          <button class="btn btn-primary btn-sm">Petit</button>
+          <button class="btn btn-primary">Normal</button>
+          <button class="btn btn-primary btn-lg">Grand</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- BADGES STATUTS -->
+    <div class="comp-card">
+      <div class="comp-title">Badges de Statut</div>
+      <div class="badge-row" style="margin-bottom:1rem;">
+        <span class="badge badge-courrier">Courrier</span>
+        <span class="badge badge-spfei">SPFEI Admin</span>
+        <span class="badge badge-scvaa">SCVAA</span>
+      </div>
+      <div class="badge-row" style="margin-bottom:1rem;">
+        <span class="badge badge-nonconforme">Non Conforme</span>
+        <span class="badge badge-conservation">Conservation</span>
+      </div>
+      <div class="badge-row">
+        <span class="badge badge-termine">✓ Terminé</span>
+      </div>
+      <div style="margin-top:1.2rem;">
+        <div style="font-size:0.72rem;font-weight:700;color:var(--neutral-400);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.5rem;">Tags divers</div>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+          <span style="background:var(--ci-green-pale);color:var(--ci-green-dark);padding:0.2rem 0.7rem;border-radius:20px;font-size:0.72rem;font-weight:700;">Conforme ✓</span>
+          <span style="background:#FEF0E4;color:#9A3D00;padding:0.2rem 0.7rem;border-radius:20px;font-size:0.72rem;font-weight:700;">En attente</span>
+          <span style="background:var(--neutral-100);color:var(--neutral-500);padding:0.2rem 0.7rem;border-radius:20px;font-size:0.72rem;font-weight:700;">Brouillon</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- FORMULAIRE -->
+    <div class="comp-card">
+      <div class="comp-title">Champs de Formulaire</div>
+      <div class="input-showcase">
+        <div class="input-group">
+          <label class="input-label">Numéro de Dossier <span>*</span></label>
+          <input class="input-field" type="text" placeholder="ex: DF-2025-001" value="DF-2025-042">
+          <span class="input-hint">Format : DF-AAAA-NNN</span>
+        </div>
+        <div class="input-group">
+          <label class="input-label">Demandeur <span>*</span></label>
+          <input class="input-field success" type="text" value="KONE Moussa Ibrahima">
+        </div>
+        <div class="input-group">
+          <label class="input-label">Région</label>
+          <input class="input-field error" type="text" placeholder="Région obligatoire">
+          <span class="input-hint err">⚠ Ce champ est requis</span>
+        </div>
+        <div class="input-group">
+          <label class="input-label">Superficie (ha)</label>
+          <input class="input-field" type="number" placeholder="0.00">
+        </div>
+      </div>
+    </div>
+
+    <!-- CARTES DOSSIER -->
+    <div class="comp-card">
+      <div class="comp-title">Cartes Dossier</div>
+      <div class="card-showcase">
+        <div class="dos-card">
+          <div class="dos-card-left">
+            <div class="dos-card-icon">📁</div>
+            <div>
+              <div class="dos-card-num">DF-2025-042</div>
+              <div class="dos-card-name">KONE Moussa — Abidjan</div>
+            </div>
+          </div>
+          <span class="badge badge-spfei">SPFEI</span>
+        </div>
+        <div class="dos-card green">
+          <div class="dos-card-left">
+            <div class="dos-card-icon" style="background:var(--ci-green-pale);">📐</div>
+            <div>
+              <div class="dos-card-num">DF-2025-041</div>
+              <div class="dos-card-name">DIALLO Fatou — Yamoussoukro</div>
+            </div>
+          </div>
+          <span class="badge badge-scvaa">SCVAA</span>
+        </div>
+        <div class="dos-card blue">
+          <div class="dos-card-left">
+            <div class="dos-card-icon" style="background:#EFF6FF;">📬</div>
+            <div>
+              <div class="dos-card-num">DF-2025-040</div>
+              <div class="dos-card-name">TRAORE Seydou — Bouaké</div>
+            </div>
+          </div>
+          <span class="badge badge-courrier">Courrier</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ALERTES -->
+    <div class="comp-card">
+      <div class="comp-title">Alertes & Notifications</div>
+      <div class="alert-showcase">
+        <div class="alert alert-success">
+          <span class="alert-icon">✅</span>
+          <div>Dossier DF-2025-042 transmis avec succès à la Conservation Foncière. SMS envoyé au propriétaire.</div>
+        </div>
+        <div class="alert alert-warning">
+          <span class="alert-icon">⚠️</span>
+          <div>Le dossier est en attente de validation depuis plus de 5 jours.</div>
+        </div>
+        <div class="alert alert-error">
+          <span class="alert-icon">❌</span>
+          <div>Dossier non conforme : limites non bornées, plan cadastral incomplet.</div>
+        </div>
+        <div class="alert alert-info">
+          <span class="alert-icon">ℹ️</span>
+          <div>SMS de notification envoyé au +225 07 XX XX XX XX.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WORKFLOW -->
+    <div class="comp-card" style="grid-column: 1 / -1;">
+      <div class="comp-title">Barre de Progression — Circuit Foncier</div>
+      <div class="workflow-steps">
+        <div class="wf-step">
+          <div class="wf-node">
+            <div class="wf-circle done">✓</div>
+            <div class="wf-label">Courrier</div>
+          </div>
+        </div>
+        <div class="wf-arrow done-arrow"><div class="wf-arrow-line"></div>▶</div>
+        <div class="wf-step">
+          <div class="wf-node">
+            <div class="wf-circle done">✓</div>
+            <div class="wf-label">SPFEI Admin</div>
+          </div>
+        </div>
+        <div class="wf-arrow active-arrow"><div class="wf-arrow-line"></div>▶</div>
+        <div class="wf-step">
+          <div class="wf-node">
+            <div class="wf-circle active">3</div>
+            <div class="wf-label">SCVAA</div>
+          </div>
+        </div>
+        <div class="wf-arrow pending-arrow"><div class="wf-arrow-line"></div>▶</div>
+        <div class="wf-step">
+          <div class="wf-node">
+            <div class="wf-circle pending">4</div>
+            <div class="wf-label">SPFEI Titre</div>
+          </div>
+        </div>
+        <div class="wf-arrow pending-arrow"><div class="wf-arrow-line"></div>▶</div>
+        <div class="wf-step">
+          <div class="wf-node">
+            <div class="wf-circle pending">5</div>
+            <div class="wf-label">Conservation</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="ci-divider"></div>
+
+<!-- ===== APERÇU ÉCRAN ===== -->
+<section id="preview">
+  <div class="section-label">05 · Aperçu Interface</div>
+  <h2 class="section-title">L'Interface <span>en Action</span></h2>
+  <p class="section-sub">Aperçu fidèle de l'application DosTracker telle qu'elle sera rendue dans le navigateur — sidebar sombre, contenu blanc, accents CI.</p>
+
+  <div class="screen-preview">
+    <div class="screen-bar">
+      <div class="screen-dot sd-red"></div>
+      <div class="screen-dot sd-yellow"></div>
+      <div class="screen-dot sd-green"></div>
+      <div class="screen-url">app.dostracker.ci/dashboard</div>
+    </div>
+    <div class="screen-body">
+      <!-- Sidebar -->
+      <div class="screen-sidebar">
+        <div class="screen-logo-area">
+          <div class="screen-logo-icon">🗺️</div>
+          <div class="screen-logo-name">Dos<span class="sln-t">Tracker</span></div>
+        </div>
+        <div class="screen-nav-label">Principal</div>
+        <div class="screen-nav-item active">📊 Tableau de bord</div>
+        <div class="screen-nav-item">📁 Tous les dossiers</div>
+        <div class="screen-nav-label" style="margin-top:0.75rem;">Services</div>
+        <div class="screen-nav-item">📬 Courrier</div>
+        <div class="screen-nav-item">🔍 SPFEI</div>
+        <div class="screen-nav-item">📐 SCVAA</div>
+        <div class="screen-nav-item">🏛️ Conservation</div>
+        <div class="screen-nav-label" style="margin-top:0.75rem;">Outils</div>
+        <div class="screen-nav-item">📱 Journal SMS</div>
+      </div>
+      <!-- Main -->
+      <div class="screen-main">
+        <div class="screen-topbar">
+          <div class="screen-page-title">Tableau de Bord</div>
+          <div class="screen-add-btn">➕ Nouveau Dossier</div>
+        </div>
+        <div class="screen-stats">
+          <div class="screen-stat">
+            <div class="screen-stat-val">47</div>
+            <div class="screen-stat-lbl">Total Dossiers</div>
+            <div class="screen-stat-bar" style="background:linear-gradient(90deg,#F47920,#FEF0E4);"></div>
+          </div>
+          <div class="screen-stat">
+            <div class="screen-stat-val">12</div>
+            <div class="screen-stat-lbl">En Traitement</div>
+            <div class="screen-stat-bar" style="background:linear-gradient(90deg,#3B82F6,#EFF6FF);"></div>
+          </div>
+          <div class="screen-stat">
+            <div class="screen-stat-val" style="color:#EF4444;">3</div>
+            <div class="screen-stat-lbl">Non Conformes</div>
+            <div class="screen-stat-bar" style="background:linear-gradient(90deg,#EF4444,#FEF2F2);"></div>
+          </div>
+          <div class="screen-stat">
+            <div class="screen-stat-val" style="color:#00853F;">32</div>
+            <div class="screen-stat-lbl">Terminés</div>
+            <div class="screen-stat-bar" style="background:linear-gradient(90deg,#00853F,#E4F5EC);"></div>
+          </div>
+        </div>
+        <div class="screen-table-header">
+          <div>N° Dossier</div>
+          <div>Demandeur</div>
+          <div>Région</div>
+          <div>Statut</div>
+          <div></div>
+        </div>
+        <div class="screen-table-row">
+          <div style="font-weight:700;">DF-2025-042</div>
+          <div>KONE Moussa</div>
+          <div>Abidjan</div>
+          <div><span class="mini-badge mb-orange">SPFEI</span></div>
+          <div>→</div>
+        </div>
+        <div class="screen-table-row">
+          <div style="font-weight:700;">DF-2025-041</div>
+          <div>DIALLO Fatou</div>
+          <div>Yamoussoukro</div>
+          <div><span class="mini-badge mb-green">SCVAA</span></div>
+          <div>→</div>
+        </div>
+        <div class="screen-table-row">
+          <div style="font-weight:700;">DF-2025-040</div>
+          <div>TRAORE Seydou</div>
+          <div>Bouaké</div>
+          <div><span class="mini-badge mb-red">Non conf.</span></div>
+          <div>→</div>
+        </div>
+        <div class="screen-table-row">
+          <div style="font-weight:700;">DF-2025-039</div>
+          <div>BAMBA Salimata</div>
+          <div>San-Pédro</div>
+          <div><span class="mini-badge mb-blue">Courrier</span></div>
+          <div>→</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Spacing reference -->
+  <div style="background:white;border-radius:var(--radius-xl);padding:2.5rem;box-shadow:var(--shadow-md);">
+    <div class="comp-title">Système d'Espacement</div>
+    <div class="spacing-row">
+      <div class="spacing-box" style="width:4px;height:4px;"></div>
+      <div class="spacing-info"><span class="spacing-val">4px · 0.25rem</span> — Micro espacement (entre éléments inline)</div>
+    </div>
+    <div class="spacing-row">
+      <div class="spacing-box" style="width:8px;height:8px;"></div>
+      <div class="spacing-info"><span class="spacing-val">8px · 0.5rem</span> — Petit (gap icône-texte)</div>
+    </div>
+    <div class="spacing-row">
+      <div class="spacing-box" style="width:16px;height:16px;"></div>
+      <div class="spacing-info"><span class="spacing-val">16px · 1rem</span> — Moyen (padding boutons, gap items)</div>
+    </div>
+    <div class="spacing-row">
+      <div class="spacing-box" style="width:24px;height:24px;"></div>
+      <div class="spacing-info"><span class="spacing-val">24px · 1.5rem</span> — Padding cards, gap colonnes</div>
+    </div>
+    <div class="spacing-row">
+      <div class="spacing-box" style="width:32px;height:32px;"></div>
+      <div class="spacing-info"><span class="spacing-val">32px · 2rem</span> — Padding sections, espacement majeur</div>
+    </div>
+    <div class="spacing-row" style="border-bottom:none;">
+      <div class="spacing-box" style="width:48px;height:48px;"></div>
+      <div class="spacing-info"><span class="spacing-val">48px · 3rem</span> — Espacement entre sections de page</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="ci-flag-footer">
+    <span style="background:#F47920;"></span>
+    <span style="background:white;"></span>
+    <span style="background:#00853F;"></span>
+  </div>
+  <div class="footer-logo">Dos<span>Tracker</span></div>
+  <p>Charte Graphique Officielle · Version 1.0 · Côte d'Ivoire</p>
+  <p style="margin-top:0.5rem;font-size:0.75rem;opacity:0.4;">Outfit + Nunito · #F47920 · #00853F · #FFFFFF · #0F1923</p>
+</footer>
+
+<div id="toast" style="position:fixed;bottom:2rem;right:2rem;background:var(--neutral-900);color:white;padding:0.75rem 1.25rem;border-radius:var(--radius-full);font-size:0.82rem;font-weight:600;opacity:0;transition:opacity 0.3s;pointer-events:none;z-index:9999;border-left:3px solid var(--ci-green);">✓ Code couleur copié !</div>
+
+<script>
+// Scroll indicator
+window.addEventListener('scroll', () => {
+  const scroll = window.scrollY;
+  const height = document.documentElement.scrollHeight - window.innerHeight;
+  document.getElementById('scrollBar').style.width = (scroll / height * 100) + '%';
+});
+
+// Copy color
+function copyColor(el, hex) {
+  navigator.clipboard.writeText(hex).catch(() => {});
+  const toast = document.getElementById('toast');
+  toast.textContent = '✓ ' + hex + ' copié !';
+  toast.style.opacity = '1';
+  setTimeout(() => toast.style.opacity = '0', 2000);
+}
+
+// Animate on scroll
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.color-swatch, .comp-card, .logo-variant, .type-showcase').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(20px)';
+  el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+  observer.observe(el);
+});
+</script>
+</body>
+</html>
