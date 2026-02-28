@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from typing import Dict, Any, List
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from app.core.deps import get_current_active_user
 from app.database import get_supabase
@@ -148,43 +148,70 @@ async def calculate_processing_times() -> Dict[str, Any]:
     for d in dossiers.data:
         # Courrier → SPFEI
         if d["date_enregistrement"] and d["date_envoi_spfei"]:
-            start = datetime.fromisoformat(d["date_enregistrement"].replace("Z", "+00:00"))
-            end = datetime.fromisoformat(d["date_envoi_spfei"].replace("Z", "+00:00"))
-            days = (end - start).total_seconds() / 86400  # Convertir en jours
-            times["courrier_to_spfei"]["total_days"] += days
-            times["courrier_to_spfei"]["count"] += 1
+            try:
+                # Convertir date_enregistrement (date) en datetime UTC
+                if isinstance(d["date_enregistrement"], str):
+                    start = datetime.fromisoformat(d["date_enregistrement"]).replace(tzinfo=timezone.utc)
+                else:
+                    start = datetime.combine(d["date_enregistrement"], datetime.min.time()).replace(tzinfo=timezone.utc)
+                
+                # Convertir date_envoi_spfei (timestamp) en datetime UTC
+                end = datetime.fromisoformat(d["date_envoi_spfei"].replace("Z", "+00:00"))
+                
+                days = (end - start).total_seconds() / 86400  # Convertir en jours
+                times["courrier_to_spfei"]["total_days"] += days
+                times["courrier_to_spfei"]["count"] += 1
+            except Exception:
+                pass
         
         # SPFEI → SCVAA
         if d["date_envoi_spfei"] and d["date_envoi_scvaa"]:
-            start = datetime.fromisoformat(d["date_envoi_spfei"].replace("Z", "+00:00"))
-            end = datetime.fromisoformat(d["date_envoi_scvaa"].replace("Z", "+00:00"))
-            days = (end - start).total_seconds() / 86400
-            times["spfei_to_scvaa"]["total_days"] += days
-            times["spfei_to_scvaa"]["count"] += 1
+            try:
+                start = datetime.fromisoformat(d["date_envoi_spfei"].replace("Z", "+00:00"))
+                end = datetime.fromisoformat(d["date_envoi_scvaa"].replace("Z", "+00:00"))
+                days = (end - start).total_seconds() / 86400
+                times["spfei_to_scvaa"]["total_days"] += days
+                times["spfei_to_scvaa"]["count"] += 1
+            except Exception:
+                pass
         
         # SCVAA → Décision
         if d["date_envoi_scvaa"] and d["date_decision_scvaa"]:
-            start = datetime.fromisoformat(d["date_envoi_scvaa"].replace("Z", "+00:00"))
-            end = datetime.fromisoformat(d["date_decision_scvaa"].replace("Z", "+00:00"))
-            days = (end - start).total_seconds() / 86400
-            times["scvaa_to_decision"]["total_days"] += days
-            times["scvaa_to_decision"]["count"] += 1
+            try:
+                start = datetime.fromisoformat(d["date_envoi_scvaa"].replace("Z", "+00:00"))
+                end = datetime.fromisoformat(d["date_decision_scvaa"].replace("Z", "+00:00"))
+                days = (end - start).total_seconds() / 86400
+                times["scvaa_to_decision"]["total_days"] += days
+                times["scvaa_to_decision"]["count"] += 1
+            except Exception:
+                pass
         
         # SPFEI Titre → Conservation
         if d["date_attribution_titre"] and d["date_envoi_conservation"]:
-            start = datetime.fromisoformat(d["date_attribution_titre"].replace("Z", "+00:00"))
-            end = datetime.fromisoformat(d["date_envoi_conservation"].replace("Z", "+00:00"))
-            days = (end - start).total_seconds() / 86400
-            times["spfei_titre_to_conservation"]["total_days"] += days
-            times["spfei_titre_to_conservation"]["count"] += 1
+            try:
+                start = datetime.fromisoformat(d["date_attribution_titre"].replace("Z", "+00:00"))
+                end = datetime.fromisoformat(d["date_envoi_conservation"].replace("Z", "+00:00"))
+                days = (end - start).total_seconds() / 86400
+                times["spfei_titre_to_conservation"]["total_days"] += days
+                times["spfei_titre_to_conservation"]["count"] += 1
+            except Exception:
+                pass
         
         # Processus complet
         if d["date_enregistrement"] and d["date_envoi_conservation"]:
-            start = datetime.fromisoformat(d["date_enregistrement"].replace("Z", "+00:00"))
-            end = datetime.fromisoformat(d["date_envoi_conservation"].replace("Z", "+00:00"))
-            days = (end - start).total_seconds() / 86400
-            times["total_process"]["total_days"] += days
-            times["total_process"]["count"] += 1
+            try:
+                # Convertir date_enregistrement (date) en datetime UTC
+                if isinstance(d["date_enregistrement"], str):
+                    start = datetime.fromisoformat(d["date_enregistrement"]).replace(tzinfo=timezone.utc)
+                else:
+                    start = datetime.combine(d["date_enregistrement"], datetime.min.time()).replace(tzinfo=timezone.utc)
+                
+                end = datetime.fromisoformat(d["date_envoi_conservation"].replace("Z", "+00:00"))
+                days = (end - start).total_seconds() / 86400
+                times["total_process"]["total_days"] += days
+                times["total_process"]["count"] += 1
+            except Exception:
+                pass
     
     # Calculer les moyennes
     result = {}

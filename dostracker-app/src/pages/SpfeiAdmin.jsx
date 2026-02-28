@@ -134,10 +134,10 @@ export default function SpfeiAdmin() {
                 <option value="Urbain">Urbain</option>
               </select>
             </div>
-            <Input label="Date enquête officielle"           name="date_enquete_officielle" value={form.date_enquete_officielle} onChange={handleChange} type="date" />
-            <Input label="Date validation enquête"           name="date_valid_enq"          value={form.date_valid_enq}          onChange={handleChange} type="date" />
-            <Input label="Date d'établissement du CF"        name="date_etab_cf"            value={form.date_etab_cf}            onChange={handleChange} type="date" />
-            <Input label="Date de demande d'immatriculation" name="date_demande_immat"      value={form.date_demande_immat}      onChange={handleChange} type="date" />
+            <Input label="Date enquête officielle"           name="date_enquete_officielle" value={form.date_enquete_officielle} onChange={handleChange} type="date" required />
+            <Input label="Date validation enquête"           name="date_valid_enq"          value={form.date_valid_enq}          onChange={handleChange} type="date" required />
+            <Input label="Date d'établissement du CF"        name="date_etab_cf"            value={form.date_etab_cf}            onChange={handleChange} type="date" required />
+            <Input label="Date de demande d'immatriculation" name="date_demande_immat"      value={form.date_demande_immat}      onChange={handleChange} type="date" required />
             <div className="sm:col-span-2 flex gap-3 justify-end pt-2">
               <Button type="button" variant="ghost" onClick={() => setActive(null)}>Annuler</Button>
               <Button type="submit" variant="secondary" disabled={saving} onClick={handleTraiter}>
