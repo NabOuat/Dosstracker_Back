@@ -1,18 +1,19 @@
 import { useEffect, useState } from 'react'
 import { CheckCircle, XCircle, Send, Save, ChevronLeft, CheckSquare, Square } from 'lucide-react'
 import { getDossiers, updateScvaa } from '../api/dossiers'
-import { getMotifs } from '../api/admin'
 import DossierCard from '../components/DossierCard'
 import DossierDetail from '../components/DossierDetail'
 import Button from '../components/ui/Button'
 import Input from '../components/ui/Input'
 import Alert from '../components/ui/Alert'
 import { motion, AnimatePresence } from 'framer-motion'
+import { MOTIFS_INCONFORMITE } from '../utils/mockData'
 
 const INIT = { superficie_ha: '', date_bornage: '', geometre_expert: '', contact_geometre: '', decision_conformite: '', motifs_inconformite: [], envoi_sms: false }
 
 export default function Scvaa() {
   const [dossiers, setDossiers] = useState([])
+  const [nonConformeDossiers, setNonConformeDossiers] = useState([])
   const [motifs, setMotifs] = useState([])
   const [active,   setActive]   = useState(null)
   const [form,     setForm]     = useState(INIT)
@@ -22,17 +23,19 @@ export default function Scvaa() {
   const [success,  setSuccess]  = useState('')
   const [error,    setError]    = useState('')
   const [selectedDossiers, setSelectedDossiers] = useState([])
+  const [activeTab, setActiveTab] = useState('a-contrler') // 'a-contrler' ou 'non-conformes'
 
-  const load = () => getDossiers('SCVAA').then(setDossiers)
+  const load = async () => {
+    const scvaaData = await getDossiers('SCVAA')
+    setDossiers(scvaaData || [])
+    
+    // Charger aussi les dossiers non conformes
+    const nonConformeData = await getDossiers('NON_CONFORME')
+    setNonConformeDossiers(nonConformeData || [])
+  }
   
   useEffect(() => {
     load()
-    getMotifs()
-      .then(data => setMotifs(data || []))
-      .catch(err => {
-        console.error('Erreur chargement motifs:', err)
-        setMotifs([])
-      })
   }, [])
 
   const handleOpen = d => { setActive(d); setForm({ ...INIT, ...d, motifs_inconformite: [], envoi_sms: false }) }
@@ -154,9 +157,9 @@ export default function Scvaa() {
             <form onSubmit={handleSubmit} className="flex flex-col gap-5">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Input label="Superficie (ha)"  name="superficie_ha"    required value={form.superficie_ha}    onChange={handleChange} type="number" step="0.01" placeholder="ex : 2.5" />
-              <Input label="Date de bornage"  name="date_bornage"              value={form.date_bornage}      onChange={handleChange} type="date" />
-              <Input label="Géomètre Expert"  name="geometre_expert"           value={form.geometre_expert}   onChange={handleChange} placeholder="Nom du géomètre" />
-              <Input label="Contact géomètre" name="contact_geometre"          value={form.contact_geometre}  onChange={handleChange} type="tel" />
+              <Input label="Date de bornage"  name="date_bornage"     required value={form.date_bornage}      onChange={handleChange} type="date" />
+              <Input label="Géomètre Expert"  name="geometre_expert"  required value={form.geometre_expert}   onChange={handleChange} placeholder="Nom du géomètre" />
+              <Input label="Contact géomètre" name="contact_geometre" required value={form.contact_geometre}  onChange={handleChange} type="tel" />
             </div>
 
             {/* Décision */}
@@ -235,92 +238,51 @@ export default function Scvaa() {
         )}
       </AnimatePresence>
 
-      {/* Actions en lot */}
-      {selectedDossiers.length > 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-lg p-4 mb-4 flex flex-wrap items-center justify-between gap-3"
-          style={{ boxShadow: 'var(--shadow-sm)', borderLeft: '4px solid var(--ci-green)' }}
+      {/* Onglets */}
+      <div className="flex gap-2 mb-6 border-b border-neutral-200">
+        <button
+          onClick={() => setActiveTab('a-contrler')}
+          className={`px-4 py-3 font-semibold text-sm transition-colors ${
+            activeTab === 'a-contrler'
+              ? 'text-neutral-900 border-b-2 border-green-500'
+              : 'text-neutral-500 hover:text-neutral-700'
+          }`}
         >
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-neutral-700">
-              {selectedDossiers.length} dossier(s) sélectionné(s)
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline-green"
-              size="sm"
-              onClick={() => setSelectedDossiers([])}
-            >
-              Désélectionner tout
-            </Button>
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={sendSelectedDossiers}
-              disabled={sending}
-              className="flex items-center gap-2"
-            >
-              <Send size={14} />
-              {sending ? 'Envoi...' : 'Envoyer'}
-            </Button>
-          </div>
-        </motion.div>
-      )}
+          À contrôler ({dossiers.length})
+        </button>
+        <button
+          onClick={() => setActiveTab('non-conformes')}
+          className={`px-4 py-3 font-semibold text-sm transition-colors ${
+            activeTab === 'non-conformes'
+              ? 'text-neutral-900 border-b-2 border-red-500'
+              : 'text-neutral-500 hover:text-neutral-700'
+          }`}
+        >
+          Non conformes ({nonConformeDossiers.length})
+        </button>
+      </div>
 
       <div className="flex flex-col gap-3">
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-neutral-500 font-semibold">{dossiers.length} dossier(s) à contrôler</p>
-          {dossiers.length > 0 && (
-            <div
-              className="flex items-center gap-1 cursor-pointer text-sm text-neutral-500 hover:text-ci-green transition-colors"
-              onClick={selectAllDossiers}
-            >
-              {selectedDossiers.length === dossiers.length && dossiers.length > 0 ? (
-                <>
-                  <CheckSquare size={16} className="text-ci-green" />
-                  <span>Tout désélectionner</span>
-                </>
-              ) : (
-                <>
-                  <Square size={16} />
-                  <span>Tout sélectionner</span>
-                </>
-              )}
-            </div>
-          )}
-        </div>
+        {activeTab === 'a-contrler' && (
+          <>
+            <p className="text-sm text-neutral-500 font-semibold mb-4">{dossiers.length} dossier(s) à contrôler</p>
 
-        {dossiers.map(d => (
-          <motion.div
-            key={d.id}
-            layout
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <DossierCard
-              dossier={d}
-              onClick={() => setSelected(d)}
-              action={
-                <div className="flex items-center gap-2">
-                  <div
-                    className="cursor-pointer p-1 hover:bg-neutral-100 rounded-md transition-colors"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      toggleSelectDossier(d.id)
-                    }}
-                  >
-                    {selectedDossiers.includes(d.id) ? (
-                      <CheckSquare size={18} className="text-ci-green" />
-                    ) : (
-                      <Square size={18} className="text-neutral-400" />
-                    )}
+            {dossiers.map(d => (
+              <motion.div
+                key={d.id}
+                layout
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="flex items-center gap-4 p-4 rounded-lg bg-white border-l-4 border-green-500 hover:shadow-md transition-shadow">
+                  <div className="flex-1 cursor-pointer" onClick={() => setSelected(d)}>
+                    <p className="font-bold text-neutral-900">{d.numero_dossier}</p>
+                    <p className="text-sm text-neutral-600">{d.demandeur}</p>
+                    <p className="text-xs text-neutral-500 mt-1">Région: {d.region} • Département: {d.departement}</p>
                   </div>
                   <Button
-                    variant="outline-green"
+                    variant="primary"
                     size="sm"
                     onClick={(e) => {
                       e.stopPropagation()
@@ -330,20 +292,64 @@ export default function Scvaa() {
                     Contrôler
                   </Button>
                 </div>
-              }
-            />
-          </motion.div>
-        ))}
-        {dossiers.length === 0 && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="text-center py-16 text-neutral-400"
-          >
-            <p className="text-4xl mb-3">✅</p>
-            <p className="font-semibold">Aucun dossier à contrôler</p>
-          </motion.div>
+              </motion.div>
+            ))}
+            {dossiers.length === 0 && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
+                className="text-center py-16 text-neutral-400"
+              >
+                <p className="text-4xl mb-3">✅</p>
+                <p className="font-semibold">Aucun dossier à contrôler</p>
+              </motion.div>
+            )}
+          </>
+        )}
+
+        {activeTab === 'non-conformes' && (
+          <>
+            <p className="text-sm text-neutral-500 font-semibold mb-4">{nonConformeDossiers.length} dossier(s) non conforme(s)</p>
+            {nonConformeDossiers.map(d => (
+              <motion.div
+                key={d.id}
+                layout
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="flex items-center gap-4 p-4 rounded-lg bg-white border-l-4 border-red-500 hover:shadow-md transition-shadow">
+                  <div className="flex-1 cursor-pointer" onClick={() => setSelected(d)}>
+                    <p className="font-bold text-neutral-900">{d.numero_dossier}</p>
+                    <p className="text-sm text-neutral-600">{d.demandeur}</p>
+                    <div className="mt-2 flex gap-2 text-xs text-neutral-500">
+                      <span className="px-2 py-1 bg-red-100 text-red-700 rounded">Motifs: {d.motifs_inconformite?.join(', ') || 'Non spécifiés'}</span>
+                    </div>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setSelected(d)}
+                    style={{ color: '#EF4444' }}
+                  >
+                    Voir détails
+                  </Button>
+                </div>
+              </motion.div>
+            ))}
+            {nonConformeDossiers.length === 0 && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
+                className="text-center py-16 text-neutral-400"
+              >
+                <p className="text-4xl mb-3">📋</p>
+                <p className="font-semibold">Aucun dossier non conforme</p>
+              </motion.div>
+            )}
+          </>
         )}
       </div>
       <DossierDetail dossier={selected} onClose={() => setSelected(null)} />

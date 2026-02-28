@@ -5,7 +5,7 @@ import { forwardRef } from 'react'
  * status: '' (default) | success | error
  */
 const Input = forwardRef(function Input(
-  { label, hint, status = '', required = false, className = '', id, ...props },
+  { label, hint, status = '', required = false, className = '', id, value, ...props },
   ref
 ) {
   const inputId = id ?? label?.toLowerCase().replace(/\s+/g, '-')
@@ -25,6 +25,7 @@ const Input = forwardRef(function Input(
         ref={ref}
         id={inputId}
         className={`input-field ${status} ${className}`}
+        value={value ?? ''}
         {...props}
       />
       {hint && (

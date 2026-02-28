@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, Query
 from typing import List, Any, Optional
 from datetime import datetime, timezone, date
 from pydantic import BaseModel
+import os
 
 from app.core.deps import get_current_active_user, get_courrier_user, get_spfei_user, get_scvaa_user
 from app.database import get_supabase
@@ -10,6 +11,7 @@ from app.models.dossier import (
     DossierSPFEIAdmin, DossierSCVAA, DossierSPFEITitre
 )
 from app.models.enums import StatutDossier
+from app.services.sms_service import sms_service
 
 router = APIRouter(prefix="/dossiers", tags=["Dossiers"])
 
@@ -293,12 +295,18 @@ async def update_scvaa(
     if not dossier.data:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Dossier non trouvé ou non au statut SCVAA")
 
-    update_data = dossier_in.model_dump()
+    update_data = dossier_in.model_dump(exclude_none=True)
     update_data["agent_scvaa_id"] = current_user["id"]
     update_data["date_decision_scvaa"] = datetime.now(timezone.utc).isoformat()
 
     nouveau_statut = "NON_CONFORME" if dossier_in.decision_conformite == "NON_CONFORME" else "SPFEI_TITRE"
     update_data["statut"] = nouveau_statut
+    
+    # Convertir les dates en chaînes pour la sérialisation JSON
+    for date_field in ['date_bornage']:
+        if date_field in update_data and update_data[date_field]:
+            if isinstance(update_data[date_field], date):
+                update_data[date_field] = update_data[date_field].isoformat()
 
     response = supabase.table("dossiers").update(update_data).eq("id", dossier_id).execute()
     if not response.data:
@@ -321,15 +329,43 @@ async def update_scvaa(
             motifs_str = ", ".join(dossier_in.motifs_inconformite) if dossier_in.motifs_inconformite else ""
             if dossier_in.autre_motif:
                 motifs_str += f", {dossier_in.autre_motif}" if motifs_str else dossier_in.autre_motif
-            supabase.table("sms_log").insert({
+            
+            # Vérifier que le numéro de contact est valide et différent du numéro Twilio
+            contact_number = d.get("contact_demandeur", "")
+            twilio_number = os.getenv("TWILIO_PHONE_NUMBER", "")
+            
+            if contact_number and contact_number != twilio_number:
+                # Envoyer le SMS via Twilio
+                sms_result = sms_service.send_notification_sms(
+                    to_number=contact_number,
+                    notification_type="non_conforme",
+                    context={
+                        "numero": d["numero_dossier"],
+                        "motifs": motifs_str
+                    }
+                )
+            else:
+                # Si le numéro est invalide ou identique, enregistrer une erreur
+                sms_result = {"success": False, "error": "Numéro de contact invalide ou identique au numéro Twilio"}
+            
+            # Enregistrer le SMS dans la base de données avec le statut réel
+            sms_status = "ENVOYE" if sms_result.get("success") else "ERREUR"
+            sms_log_data = {
                 "dossier_id": dossier_id,
-                "proprietaire_id": d["proprietaire_id"],
                 "type_sms": "NON_CONFORMITE",
-                "numero_destinataire": d["contact_demandeur"],
+                "numero_destinataire": contact_number,
                 "contenu_message": f"Dossier N° {d['numero_dossier']} : NON CONFORME. Motifs : {motifs_str}.",
-                "statut": "SIMULE",
+                "statut": sms_status,
                 "envoye_par_id": current_user["id"],
-            }).execute()
+            }
+            
+            # Ajouter les détails Twilio si disponibles
+            if sms_result.get("message_sid"):
+                sms_log_data["message_sid"] = sms_result.get("message_sid")
+            if sms_result.get("error"):
+                sms_log_data["erreur_details"] = sms_result.get("error")
+            
+            supabase.table("sms_log").insert(sms_log_data).execute()
 
     updated = supabase.table("v_dossiers").select("*").eq("id", dossier_id).execute()
     return updated.data[0] if updated.data else response.data[0]
