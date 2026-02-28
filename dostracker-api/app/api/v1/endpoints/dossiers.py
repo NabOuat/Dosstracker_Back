@@ -115,6 +115,10 @@ async def create_dossier(
     dossier_data = dossier_in.model_dump()
     dossier_data["agent_courrier_id"] = current_user["id"]
     dossier_data["statut"] = "COURRIER"
+    
+    # Convertir les dates en chaînes pour la sérialisation JSON
+    if isinstance(dossier_data.get("date_enregistrement"), date):
+        dossier_data["date_enregistrement"] = dossier_data["date_enregistrement"].isoformat()
 
     response = supabase.table("dossiers").insert(dossier_data).execute()
     if not response.data:
