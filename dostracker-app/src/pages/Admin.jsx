@@ -569,7 +569,7 @@ export default function Admin() {
                       {filteredDossiers.map(d => (
                         <tr key={d.id}>
                           <td><span className="mono font-semibold" style={{ color: 'var(--n-800)' }}>{d.numero_dossier}</span></td>
-                          <td style={{ color: 'var(--n-700)' }}>{d.nom_demandeur || d.demandeur || '–'}</td>
+                          <td style={{ color: 'var(--n-700)' }}>{d.demandeur || '–'}</td>
                           <td style={{ color: 'var(--n-500)' }}>{d.region}</td>
                           <td><StatutBadge statut={d.statut} /></td>
                           <td style={{ fontSize: '0.78rem', color: 'var(--n-400)' }}>{formatDate(d.created_at)}</td>

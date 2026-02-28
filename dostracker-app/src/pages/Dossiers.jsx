@@ -54,7 +54,7 @@ export default function Dossiers() {
 
   const filtered = useMemo(() => dossiers.filter(d => {
     if (filters.search && !(
-      (d.nom_demandeur || '').toLowerCase().includes(filters.search.toLowerCase()) ||
+      (d.demandeur || '').toLowerCase().includes(filters.search.toLowerCase()) ||
       (d.numero_dossier || '').toLowerCase().includes(filters.search.toLowerCase())
     )) return false
     if (filters.statut && d.statut !== filters.statut) return false
@@ -304,7 +304,7 @@ export default function Dossiers() {
                         {d.numero_dossier}
                       </span>
                     </td>
-                    <td style={{ color: 'var(--n-700)' }}>{d.nom_demandeur || d.demandeur || '–'}</td>
+                    <td style={{ color: 'var(--n-700)' }}>{d.demandeur || '–'}</td>
                     <td>
                       <span className="text-xs font-semibold" style={{ color: 'var(--n-500)' }}>
                         {d.type || '–'}
@@ -357,7 +357,7 @@ export default function Dossiers() {
                     </button>
                     <div>
                       <p className="mono font-semibold text-sm" style={{ color: 'var(--n-800)' }}>{d.numero_dossier}</p>
-                      <p className="text-sm mt-0.5" style={{ color: 'var(--n-600)' }}>{d.nom_demandeur || d.demandeur || '–'}</p>
+                      <p className="text-sm mt-0.5" style={{ color: 'var(--n-600)' }}>{d.demandeur || '–'}</p>
                     </div>
                   </div>
                   <StatusBadge statut={d.statut} />
