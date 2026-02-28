@@ -16,7 +16,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 
 const INIT = {
   numero: '', date_enregistrement: new Date().toISOString().slice(0, 10),
-  region: '', prefecture: '', sous_prefecture: '', village: '',
+  region: '', prefecture: '', sous_prefecture: '', village: '', departement: '',
   numero_cf: '', demandeur: '', contact: '',
 }
 
@@ -160,17 +160,33 @@ export default function Courrier({ mode = 'creer' }) {
 
               {error && <Alert variant="error" className="mb-4">{error}</Alert>}
 
-              <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <Input label="N° de dossier"         name="numero"                required value={form.numero}              onChange={handleChange} placeholder="DOS-2026-XXXX" />
-                <Input label="Date d'enregistrement" name="date_enregistrement"   required value={form.date_enregistrement} onChange={handleChange} type="date" />
-                <Input label="Région"                name="region"                required value={form.region}              onChange={handleChange} placeholder="ex : Abidjan" />
-                <Input label="Préfecture"            name="prefecture"                     value={form.prefecture}          onChange={handleChange} />
-                <Input label="Sous-Préfecture"       name="sous_prefecture"                value={form.sous_prefecture}     onChange={handleChange} />
-                <Input label="Village"               name="village"                        value={form.village}             onChange={handleChange} />
-                <Input label="Numéro du CF"          name="numero_cf"                      value={form.numero_cf}           onChange={handleChange} />
-                <Input label="Demandeur"             name="demandeur"             required value={form.demandeur}           onChange={handleChange} placeholder="Nom Prénom" />
-                <Input label="Contact (téléphone)"   name="contact"               required value={form.contact}             onChange={handleChange} placeholder="07XXXXXXXX" type="tel" />
-                <div className="sm:col-span-2 flex gap-3 justify-end pt-2">
+              <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <Input label="N° de dossier"         name="numero"                required value={form.numero}              onChange={handleChange} placeholder="DOS-2026-XXXX" />
+                  <Input label="Date d'enregistrement" name="date_enregistrement"   required value={form.date_enregistrement} onChange={handleChange} type="date" />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <Input label="Nom du demandeur"      name="demandeur"             required value={form.demandeur}           onChange={handleChange} placeholder="Nom Prénom" />
+                  <Input label="Contact (téléphone)"   name="contact"               required value={form.contact}             onChange={handleChange} placeholder="07XXXXXXXX" type="tel" />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <Input label="Région"                name="region"                required value={form.region}              onChange={handleChange} placeholder="ex : Lagunes" />
+                  <Input label="Département"           name="departement"                    value={form.departement}         onChange={handleChange} placeholder="ex : Abidjan 1" />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <Input label="Préfecture"            name="prefecture"                     value={form.prefecture}          onChange={handleChange} placeholder="ex : Abidjan" />
+                  <Input label="Sous-Préfecture"       name="sous_prefecture"                value={form.sous_prefecture}     onChange={handleChange} placeholder="ex : Cocody" />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <Input label="Village"               name="village"                        value={form.village}             onChange={handleChange} placeholder="ex : Riviera" />
+                  <Input label="Numéro de la demande"  name="numero_cf"                      value={form.numero_cf}           onChange={handleChange} placeholder="ex : DEM-2026-0001" />
+                </div>
+
+                <div className="flex gap-3 justify-end pt-2">
                   <Button type="button" variant="ghost" onClick={closeForm}>Annuler</Button>
                   <Button type="submit" variant="primary" disabled={saving}>
                     {saving ? 'Enregistrement…' : editMode ? 'Modifier' : 'Enregistrer'}

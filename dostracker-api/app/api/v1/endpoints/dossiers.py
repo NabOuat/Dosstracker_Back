@@ -102,23 +102,33 @@ async def create_dossier(
     current_user: dict = Depends(get_courrier_user)
 ) -> Any:
     """Crée un nouveau dossier (SERVICE COURRIER uniquement)"""
+    from app.core.logging import logger
     supabase = get_supabase()
+
+    logger.info(f"Création de dossier pour l'utilisateur {current_user['username']}")
+    logger.debug(f"Données du dossier: {dossier_in.model_dump()}")
 
     existing = supabase.table("dossiers").select("id").eq("numero_dossier", dossier_in.numero_dossier).execute()
     if existing.data:
+        logger.warning(f"Dossier avec le numéro {dossier_in.numero_dossier} existe déjà")
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Un dossier avec ce numéro existe déjà")
 
     proprietaire = supabase.table("proprietaires").select("id").eq("id", dossier_in.proprietaire_id).execute()
     if not proprietaire.data:
+        logger.warning(f"Propriétaire {dossier_in.proprietaire_id} non trouvé")
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Propriétaire non trouvé")
 
     dossier_data = dossier_in.model_dump()
     dossier_data["agent_courrier_id"] = current_user["id"]
     dossier_data["statut"] = "COURRIER"
 
+    logger.debug(f"Insertion du dossier avec les données: {dossier_data}")
     response = supabase.table("dossiers").insert(dossier_data).execute()
     if not response.data:
+        logger.error(f"Erreur lors de l'insertion du dossier: {response}")
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Erreur lors de la création du dossier")
+
+    logger.info(f"Dossier créé avec succès: {response.data[0]['id']}")
 
     supabase.table("workflow_history").insert({
         "dossier_id": response.data[0]["id"],
