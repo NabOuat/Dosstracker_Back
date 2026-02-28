@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from typing import List, Any, Optional
-from datetime import datetime, timezone
+from datetime import datetime, timezone, date
 from pydantic import BaseModel
 
 from app.core.deps import get_current_active_user, get_courrier_user, get_spfei_user, get_scvaa_user
@@ -119,6 +119,10 @@ async def create_dossier(
     # Convertir les dates en chaînes pour la sérialisation JSON
     if isinstance(dossier_data.get("date_enregistrement"), date):
         dossier_data["date_enregistrement"] = dossier_data["date_enregistrement"].isoformat()
+    
+    # Convertir les UUIDs en chaînes pour la sérialisation JSON
+    if dossier_data.get("proprietaire_id"):
+        dossier_data["proprietaire_id"] = str(dossier_data["proprietaire_id"])
 
     response = supabase.table("dossiers").insert(dossier_data).execute()
     if not response.data:

@@ -27,7 +27,7 @@ export default function DossierDetail({ dossier, onClose }) {
           className="flex items-center justify-between px-6 py-4 border-b border-neutral-200 shrink-0"
         >
           <div>
-            <p className="font-display font-bold text-base text-neutral-900">{dossier.numero}</p>
+            <p className="font-display font-bold text-base text-neutral-900">{dossier.numero_dossier}</p>
             <WorkflowBadge statut={dossier.statut} size="sm" />
           </div>
           <button
@@ -51,13 +51,14 @@ export default function DossierDetail({ dossier, onClose }) {
 
           {/* Courrier */}
           <Section title="Service Courrier" icon={FileText}>
-            <Row label="N° Dossier"       val={dossier.numero} />
+            <Row label="N° Dossier"       val={dossier.numero_dossier} />
             <Row label="Demandeur"        val={dossier.demandeur} />
-            <Row label="Contact"          val={dossier.contact} icon={Phone} />
+            <Row label="Contact"          val={dossier.contact_demandeur} icon={Phone} />
             <Row label="Région"           val={dossier.region} icon={MapPin} />
             <Row label="Préfecture"       val={dossier.prefecture} />
             <Row label="Sous-Préfecture"  val={dossier.sous_prefecture} />
             <Row label="Village"          val={dossier.village} />
+            <Row label="Département"      val={dossier.departement} />
             <Row label="N° CF"            val={dossier.numero_cf} />
             <Row label="Date enreg."      val={fmt(dossier.date_enregistrement)} icon={Calendar} />
           </Section>

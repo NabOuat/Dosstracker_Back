@@ -8,6 +8,7 @@ import { Button, Badge } from '../components/ui'
 import { motion, AnimatePresence } from 'framer-motion'
 import { getDossiers } from '../api/dossiers'
 import { useAuth } from '../context/AuthContext'
+import DossierDetail from '../components/DossierDetail'
 
 const STATUTS = {
   courrier:     { label: 'Courrier',     color: '#1E40AF', bg: '#EFF6FF', border: '#BFDBFE' },
@@ -42,7 +43,8 @@ export default function Dossiers() {
   const [selectedDossiers, setSelectedDossiers] = useState([])
   const [showExportMenu, setShowExportMenu] = useState(false)
   const [showFilters, setShowFilters] = useState(false)
-  const [filters, setFilters] = useState({ search: '', statut: '' })
+  const [filters, setFilters] = useState({ search: '', statut: '', service: '' })
+  const [selectedDossier, setSelectedDossier] = useState(null)
   
   const isCourrier = user?.service === 'Service Courrier'
 
@@ -62,6 +64,15 @@ export default function Dossiers() {
       (d.numero_dossier || '').toLowerCase().includes(filters.search.toLowerCase())
     )) return false
     if (filters.statut && d.statut !== filters.statut) return false
+    if (filters.service) {
+      const serviceMap = {
+        'COURRIER': 'Service Courrier',
+        'SPFEI': 'Service SPFEI',
+        'SCVAA': 'Service SCVAA'
+      }
+      const dossierService = serviceMap[d.statut?.split('_')[0]] || ''
+      if (!dossierService.includes(filters.service)) return false
+    }
     return true
   }), [dossiers, filters])
 
@@ -160,9 +171,23 @@ export default function Dossiers() {
                       ))}
                     </select>
                   </div>
+                  <div className="flex flex-col gap-1 min-w-[160px]">
+                    <label className="form-label" style={{ fontSize: '0.75rem' }}>Service</label>
+                    <select
+                      value={filters.service}
+                      onChange={e => setFilters(f => ({ ...f, service: e.target.value }))}
+                      className="input-field text-sm"
+                      style={{ paddingTop: 8, paddingBottom: 8 }}
+                    >
+                      <option value="">Tous les services</option>
+                      <option value="Courrier">Service Courrier</option>
+                      <option value="SPFEI">Service SPFEI</option>
+                      <option value="SCVAA">Service SCVAA</option>
+                    </select>
+                  </div>
                   {hasActiveFilter && (
                     <button
-                      onClick={() => setFilters({ search: '', statut: '' })}
+                      onClick={() => setFilters({ search: '', statut: '', service: '' })}
                       className="btn btn-ghost btn-sm"
                       style={{ borderRadius: 8 }}
                     >
@@ -372,7 +397,12 @@ export default function Dossiers() {
                   <p className="text-xs" style={{ color: 'var(--n-400)', fontFamily: 'var(--font-mono)' }}>
                     {d.type || '–'} · {d.created_at ? new Date(d.created_at).toLocaleDateString('fr-FR') : '–'}
                   </p>
-                  <Button variant="ghost" size="sm" style={{ borderRadius: 6, fontSize: 12 }}>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    style={{ borderRadius: 6, fontSize: 12 }}
+                    onClick={() => setSelectedDossier(d)}
+                  >
                     Voir
                   </Button>
                 </div>
@@ -386,6 +416,12 @@ export default function Dossiers() {
             )}
           </div>
         </motion.div>
+
+        {/* Panneau de détails */}
+        <DossierDetail 
+          dossier={selectedDossier} 
+          onClose={() => setSelectedDossier(null)} 
+        />
       </div>
     </motion.div>
   )

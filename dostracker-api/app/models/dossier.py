@@ -13,7 +13,7 @@ class DossierBase(BaseModel):
     village: Optional[str] = None
     departement: Optional[str] = None
     numero_cf: Optional[str] = None
-    proprietaire_id: UUID4
+    proprietaire_id: Optional[UUID4] = None
 
 class DossierCreate(DossierBase):
     pass

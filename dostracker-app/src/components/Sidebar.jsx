@@ -105,7 +105,7 @@ export default function Sidebar({ open, onClose }) {
                 <li key={to}>
                   <NavLink
                     to={to}
-                    end={to === '/'}
+                    end={true}
                     className={({ isActive }) =>
                       `flex items-center gap-3 px-3 py-2.5 rounded-md text-[0.85rem] font-semibold no-underline transition-all duration-150 ${
                         isActive

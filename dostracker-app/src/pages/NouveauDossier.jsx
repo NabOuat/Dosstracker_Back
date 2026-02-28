@@ -48,7 +48,14 @@ export default function NouveauDossier() {
       setSaved(true)
       setTimeout(() => navigate('/dossiers'), 2000)
     } catch (err) {
-      setError(err.response?.data?.detail || 'Erreur lors de la création du dossier')
+      const errorMsg = err.response?.data?.detail || err.message || 'Erreur lors de la création du dossier'
+      if (errorMsg.includes('existe déjà')) {
+        setError('DOUBLON: Un dossier avec ce numéro de demande existe déjà. Veuillez utiliser un numéro différent.')
+      } else if (errorMsg.includes('Propriétaire')) {
+        setError('ERREUR: Propriétaire non trouvé. Vérifiez le contact.')
+      } else {
+        setError(`ERREUR: ${errorMsg}`)
+      }
     } finally {
       setSaving(false)
     }
@@ -77,11 +84,26 @@ export default function NouveauDossier() {
         </Alert>
       )}
 
-      {error && (
-        <Alert variant="error" className="mb-6">
-          {error}
-        </Alert>
-      )}
+      <AnimatePresence>
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, y: -20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.95 }}
+            transition={{ duration: 0.3, type: 'spring', stiffness: 300 }}
+            className="mb-6 p-4 rounded-lg border-l-4"
+            style={{
+              background: '#FEE2E2',
+              borderColor: '#DC2626',
+              borderLeft: '4px solid #DC2626'
+            }}
+          >
+            <p style={{ color: '#991B1B', fontWeight: '600', fontSize: '0.95rem' }}>
+              {error}
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <form onSubmit={handleSubmit} className="bg-white rounded-lg p-6 sm:p-8 flex flex-col gap-5" style={{ boxShadow: 'var(--shadow-md)' }}>
 

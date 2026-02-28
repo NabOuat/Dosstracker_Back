@@ -73,15 +73,18 @@ export default function Courrier({ mode = 'creer' }) {
 
   const handleDemanderDroits = async (e) => {
     e.preventDefault()
-    if (!demandeForm.motif.trim()) { setError('Veuillez indiquer un motif.'); return }
+    if (!demandeForm.motif.trim()) { setError('⚠️ Veuillez indiquer un motif.'); return }
     setDemandeSending(true); setError('')
     try {
       await demanderDroitsAdmin(demandeForm.dossier_id, demandeForm.motif)
-      setSuccess("Demande envoyée à l'administrateur.")
+      setSuccess("✅ Demande envoyée à l'administrateur avec succès.")
       setShowDemandeForm(false)
       setDemandeForm({ dossier_id: null, motif: '' })
-      setTimeout(() => setSuccess(''), 3000)
-    } catch { setError("Erreur lors de l'envoi de la demande.") }
+      setTimeout(() => setSuccess(''), 4000)
+    } catch (err) {
+      const errorMsg = err.response?.data?.detail || err.message || "Erreur lors de l'envoi de la demande"
+      setError(`❌ ${errorMsg}`)
+    }
     finally { setDemandeSending(false) }
   }
 
@@ -90,24 +93,36 @@ export default function Courrier({ mode = 'creer' }) {
     if (!form.numero.trim() || !form.demandeur.trim() || !form.contact.trim() || !form.region.trim()) {
       setError('Les champs marqués * sont obligatoires.'); return
     }
-    setSaving(true); setError('')
+    setSaving(true); setError(''); setSuccess('')
     try {
       await createDossier(form)
-      setSuccess('Dossier enregistré avec succès.')
+      setSuccess('✅ Dossier enregistré avec succès !')
       setForm(INIT); setShowForm(false); setEditMode(false)
       const updated = await load()
       checkEditableDossiers(updated)
-      setTimeout(() => setSuccess(''), 3000)
+      setTimeout(() => setSuccess(''), 4000)
+    } catch (err) {
+      const errorMsg = err.response?.data?.detail || err.message || 'Erreur lors de la création du dossier'
+      if (errorMsg.includes('existe déjà')) {
+        setError('DOUBLON: Un dossier avec ce numéro de demande existe déjà. Veuillez utiliser un numéro différent.')
+      } else if (errorMsg.includes('Propriétaire')) {
+        setError('ERREUR: Propriétaire non trouvé. Vérifiez le contact.')
+      } else {
+        setError(`ERREUR: ${errorMsg}`)
+      }
     } finally { setSaving(false) }
   }
 
   const handleEnvoyer = async id => {
-    setSending(id)
+    setSending(id); setError('')
     try {
       await envoyerAuSpfei(id)
-      setSuccess('Dossier envoyé au SERVICE SPFEI.')
+      setSuccess('✅ Dossier envoyé au SERVICE SPFEI avec succès.')
       await load()
-      setTimeout(() => setSuccess(''), 3000)
+      setTimeout(() => setSuccess(''), 4000)
+    } catch (err) {
+      const errorMsg = err.response?.data?.detail || err.message || 'Erreur lors de l\'envoi'
+      setError(`❌ ${errorMsg}`)
     } finally { setSending(null) }
   }
 
@@ -164,7 +179,26 @@ export default function Courrier({ mode = 'creer' }) {
                 </button>
               </div>
 
-              {error && <Alert variant="error" className="mb-4">{error}</Alert>}
+              <AnimatePresence>
+                {error && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -20, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -20, scale: 0.95 }}
+                    transition={{ duration: 0.3, type: 'spring', stiffness: 300 }}
+                    className="mb-4 p-4 rounded-lg border-l-4"
+                    style={{
+                      background: '#FEE2E2',
+                      borderColor: '#DC2626',
+                      borderLeft: '4px solid #DC2626'
+                    }}
+                  >
+                    <p style={{ color: '#991B1B', fontWeight: '600', fontSize: '0.95rem' }}>
+                      {error}
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
