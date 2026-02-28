@@ -7,12 +7,7 @@ import WorkflowBadge, { WorkflowStepper } from './WorkflowBadge'
  * @param {function} onClose
  */
 export default function DossierDetail({ dossier, onClose }) {
-  if (!dossier) {
-    console.log('DossierDetail: dossier is null or undefined')
-    return null
-  }
-
-  console.log('DossierDetail: affichage du dossier', dossier)
+  if (!dossier) return null
 
   return (
     <>

@@ -6,7 +6,7 @@ import {
 import { Link } from 'react-router-dom'
 import { Button, Badge } from '../components/ui'
 import { motion, AnimatePresence } from 'framer-motion'
-import { getDossiers } from '../api/dossiers'
+import { getDossiers, envoyerAuSpfei } from '../api/dossiers'
 import { useAuth } from '../context/AuthContext'
 import DossierDetail from '../components/DossierDetail'
 
@@ -45,8 +45,14 @@ export default function Dossiers() {
   const [showFilters, setShowFilters] = useState(false)
   const [filters, setFilters] = useState({ search: '', statut: '', service: '' })
   const [selectedDossier, setSelectedDossier] = useState(null)
+  const [notification, setNotification] = useState(null)
   
   const isCourrier = user?.service === 'Service Courrier'
+
+  const showNotification = (message, type = 'success') => {
+    setNotification({ message, type })
+    setTimeout(() => setNotification(null), 4000)
+  }
 
   useEffect(() => {
     getDossiers()
@@ -95,15 +101,18 @@ export default function Dossiers() {
         const dossier = filtered.find(d => d.id === dossierId)
         if (dossier) {
           console.log('Envoi du dossier au SPFEI:', dossier.numero_dossier)
-          // Appel API pour envoyer le dossier (à implémenter)
+          await envoyerAuSpfei(dossierId)
         }
       }
       // Réinitialiser la sélection après l'envoi
+      const count = selectedDossiers.length
       setSelectedDossiers([])
-      alert(`${selectedDossiers.length} dossier(s) envoyé(s) au SPFEI avec succès`)
+      // Recharger les dossiers pour voir les changements
+      await getDossiers().then(data => setDossiers(data || []))
+      showNotification(`✅ ${count} dossier(s) envoyé(s) au SPFEI avec succès`, 'success')
     } catch (err) {
       console.error('Erreur lors de l\'envoi:', err)
-      alert('Erreur lors de l\'envoi des dossiers')
+      showNotification(`❌ Erreur lors de l'envoi: ${err.response?.data?.detail || err.message}`, 'error')
     }
   }
 
@@ -368,7 +377,15 @@ export default function Dossiers() {
                       {d.created_at ? new Date(d.created_at).toLocaleDateString('fr-FR') : '–'}
                     </td>
                     <td style={{ textAlign: 'right' }}>
-                      <Button variant="ghost" size="sm" style={{ borderRadius: 6 }}>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        style={{ borderRadius: 6 }}
+                        onClick={() => {
+                          console.log('Clic sur Voir pour le dossier:', d)
+                          setSelectedDossier(d)
+                        }}
+                      >
                         Voir
                       </Button>
                     </td>
@@ -447,6 +464,32 @@ export default function Dossiers() {
           dossier={selectedDossier} 
           onClose={() => setSelectedDossier(null)} 
         />
+
+        {/* Notification animée */}
+        <AnimatePresence>
+          {notification && (
+            <motion.div
+              initial={{ opacity: 0, y: -20, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -20, scale: 0.95 }}
+              transition={{ duration: 0.3, type: 'spring', stiffness: 300 }}
+              className="fixed top-6 right-6 z-50 p-4 rounded-lg max-w-sm"
+              style={{
+                background: notification.type === 'success' ? '#F0FDF4' : '#FEE2E2',
+                border: `1px solid ${notification.type === 'success' ? '#BBF7D0' : '#FECACA'}`,
+                boxShadow: '0 10px 25px rgba(0,0,0,0.1)'
+              }}
+            >
+              <p style={{ 
+                color: notification.type === 'success' ? '#166534' : '#991B1B',
+                fontWeight: '600',
+                fontSize: '0.95rem'
+              }}>
+                {notification.message}
+              </p>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </motion.div>
   )

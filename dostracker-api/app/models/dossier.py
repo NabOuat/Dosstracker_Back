@@ -52,9 +52,9 @@ class DossierUpdate(BaseModel):
     statut: Optional[StatutDossier] = None
 
 class DossierSPFEIAdmin(BaseModel):
-    nationalite: str
-    genre: Genre
-    type_cf: str
+    nationalite: Optional[str] = None
+    genre: Optional[Genre] = None
+    type_cf: Optional[str] = None
     date_enquete_officielle: Optional[date] = None
     date_valid_enq: Optional[date] = None
     date_etab_cf: Optional[date] = None

@@ -242,20 +242,30 @@ async def update_spfei_admin(
     current_user: dict = Depends(get_spfei_user)
 ) -> Any:
     """Met à jour les informations administratives et transmet au SCVAA (SERVICE SPFEI)"""
-    supabase = get_supabase()
+    try:
+        supabase = get_supabase()
 
-    dossier = supabase.table("dossiers").select("*").eq("id", dossier_id).eq("statut", "SPFEI_ADMIN").execute()
-    if not dossier.data:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Dossier non trouvé ou non au statut SPFEI_ADMIN")
+        dossier = supabase.table("dossiers").select("*").eq("id", dossier_id).eq("statut", "SPFEI_ADMIN").execute()
+        if not dossier.data:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Dossier non trouvé ou non au statut SPFEI_ADMIN")
 
-    update_data = dossier_in.model_dump()
-    update_data["agent_spfei_admin_id"] = current_user["id"]
-    update_data["statut"] = "SCVAA"
-    update_data["date_envoi_scvaa"] = datetime.now(timezone.utc).isoformat()
+        update_data = dossier_in.model_dump(exclude_none=True)
+        update_data["agent_spfei_admin_id"] = current_user["id"]
+        update_data["date_envoi_scvaa"] = datetime.now(timezone.utc).isoformat()
+        
+        # Convertir les dates en chaînes pour la sérialisation JSON
+        for date_field in ['date_enquete_officielle', 'date_valid_enq', 'date_etab_cf', 'date_demande_immat']:
+            if date_field in update_data and update_data[date_field]:
+                if isinstance(update_data[date_field], date):
+                    update_data[date_field] = update_data[date_field].isoformat()
 
-    response = supabase.table("dossiers").update(update_data).eq("id", dossier_id).execute()
-    if not response.data:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Erreur lors de la mise à jour du dossier")
+        response = supabase.table("dossiers").update(update_data).eq("id", dossier_id).execute()
+        if not response.data:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Erreur lors de la mise à jour du dossier")
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Erreur: {str(e)}")
 
     supabase.table("workflow_history").insert({
         "dossier_id": dossier_id,
