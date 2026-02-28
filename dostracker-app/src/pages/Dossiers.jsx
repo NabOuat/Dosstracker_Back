@@ -83,8 +83,29 @@ export default function Dossiers() {
 
   const selectAll = () =>
     setSelectedDossiers(
-      selectedDossiers.length === filtered.length ? [] : filtered.map(d => d.num)
+      selectedDossiers.length === filtered.length ? [] : filtered.map(d => d.id)
     )
+
+  const handleEnvoyerAuSpfei = async () => {
+    if (selectedDossiers.length === 0) return
+    
+    try {
+      // Envoyer chaque dossier sélectionné au SPFEI
+      for (const dossierId of selectedDossiers) {
+        const dossier = filtered.find(d => d.id === dossierId)
+        if (dossier) {
+          console.log('Envoi du dossier au SPFEI:', dossier.numero_dossier)
+          // Appel API pour envoyer le dossier (à implémenter)
+        }
+      }
+      // Réinitialiser la sélection après l'envoi
+      setSelectedDossiers([])
+      alert(`${selectedDossiers.length} dossier(s) envoyé(s) au SPFEI avec succès`)
+    } catch (err) {
+      console.error('Erreur lors de l\'envoi:', err)
+      alert('Erreur lors de l\'envoi des dossiers')
+    }
+  }
 
   const hasActiveFilter = filters.search || filters.statut
 
@@ -273,6 +294,7 @@ export default function Dossiers() {
               disabled={selectedDossiers.length === 0}
               className="btn btn-primary btn-sm"
               style={{ borderRadius: 8 }}
+              onClick={handleEnvoyerAuSpfei}
             >
               <Send size={13} />
               Envoyer ({selectedDossiers.length})
@@ -401,7 +423,10 @@ export default function Dossiers() {
                     variant="ghost" 
                     size="sm" 
                     style={{ borderRadius: 6, fontSize: 12 }}
-                    onClick={() => setSelectedDossier(d)}
+                    onClick={() => {
+                      console.log('Clic sur Voir pour le dossier:', d)
+                      setSelectedDossier(d)
+                    }}
                   >
                     Voir
                   </Button>

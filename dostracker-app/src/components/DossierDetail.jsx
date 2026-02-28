@@ -7,7 +7,12 @@ import WorkflowBadge, { WorkflowStepper } from './WorkflowBadge'
  * @param {function} onClose
  */
 export default function DossierDetail({ dossier, onClose }) {
-  if (!dossier) return null
+  if (!dossier) {
+    console.log('DossierDetail: dossier is null or undefined')
+    return null
+  }
+
+  console.log('DossierDetail: affichage du dossier', dossier)
 
   return (
     <>
@@ -53,7 +58,8 @@ export default function DossierDetail({ dossier, onClose }) {
           <Section title="Service Courrier" icon={FileText}>
             <Row label="N° Dossier"       val={dossier.numero_dossier} />
             <Row label="Demandeur"        val={dossier.demandeur} />
-            <Row label="Contact"          val={dossier.contact_demandeur} icon={Phone} />
+            <Row label="Contact demandeur" val={dossier.contact_demandeur} icon={Phone} />
+            <Row label="Agent Courrier"   val={dossier.agent_courrier} />
             <Row label="Région"           val={dossier.region} icon={MapPin} />
             <Row label="Préfecture"       val={dossier.prefecture} />
             <Row label="Sous-Préfecture"  val={dossier.sous_prefecture} />
