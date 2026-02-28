@@ -35,9 +35,15 @@ export default function Courrier({ mode = 'creer' }) {
   const [demandeForm, setDemandeForm] = useState({ dossier_id: null, motif: '' })
   const [demandeSending, setDemandeSending] = useState(false)
 
-  const load = () => getDossiers(['COURRIER']).then(setDossiers)
+  const load = () => getDossiers('COURRIER').then(d => {
+    setDossiers(Array.isArray(d) ? d : [])
+  })
 
   const checkEditableDossiers = async (dossiersArray) => {
+    if (!dossiersArray || !Array.isArray(dossiersArray)) {
+      setEditableDossiers({})
+      return
+    }
     const status = {}
     for (const d of dossiersArray) {
       status[d.id] = await isDossierModifiable(d.id)
@@ -46,8 +52,8 @@ export default function Courrier({ mode = 'creer' }) {
   }
 
   useEffect(() => {
-    load().then(d => checkEditableDossiers(d))
-    const interval = setInterval(() => checkEditableDossiers(dossiers), 60000)
+    load().then(d => checkEditableDossiers(d || []))
+    const interval = setInterval(() => checkEditableDossiers(dossiers || []), 60000)
     return () => clearInterval(interval)
   }, [])
 

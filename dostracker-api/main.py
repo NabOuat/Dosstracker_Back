@@ -20,10 +20,12 @@ app = FastAPI(
 # Configuration CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # À remplacer par les domaines autorisés en production
+    allow_origins=["http://localhost:5173", "http://localhost:3000", "*"],
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allow_headers=["*"],
+    expose_headers=["*"],
+    max_age=3600,
 )
 
 # Point d'entrée racine
@@ -36,7 +38,7 @@ async def root():
     }
 
 # Importer les routers après la création de l'app
-from app.api.v1.endpoints import users, dossiers, proprietaires, auth, sms, debug, auth_enhanced, admin
+from app.api.v1.endpoints import users, dossiers, proprietaires, auth, sms, debug, auth_enhanced, admin, stats
 
 # Inclure les routers
 app.include_router(auth.router, prefix="/api/v1", tags=["Authentification"])
@@ -45,6 +47,7 @@ app.include_router(users.router, prefix="/api/v1", tags=["Utilisateurs"])
 app.include_router(dossiers.router, prefix="/api/v1", tags=["Dossiers"])
 app.include_router(proprietaires.router, prefix="/api/v1", tags=["Propriétaires"])
 app.include_router(sms.router, prefix="/api/v1", tags=["SMS"])
+app.include_router(stats.router, prefix="/api/v1", tags=["Statistiques"])
 app.include_router(admin.router, prefix="/api/v1", tags=["Administration"])
 app.include_router(debug.router, prefix="/api/v1", tags=["Debug"])
 
