@@ -31,7 +31,7 @@ export async function getDossier(id) {
  * POST /dossiers – Courrier crée un nouveau dossier.
  * Crée d'abord le propriétaire (ou le retrouve par contact), puis crée le dossier.
  */
-export async function createDossier({ numero, demandeur, contact, date_enregistrement, region, prefecture, sous_prefecture, village, numero_cf }) {
+export async function createDossier({ numero, demandeur, contact, date_enregistrement, region, prefecture, sous_prefecture, village, departement, numero_cf }) {
   try {
     // Étape 1 : créer ou retrouver le propriétaire
     let proprietaire_id
@@ -61,6 +61,7 @@ export async function createDossier({ numero, demandeur, contact, date_enregistr
       prefecture: prefecture || null,
       sous_prefecture: sous_prefecture || null,
       village: village || null,
+      departement: departement || null,
       numero_cf: numero_cf || null,
       proprietaire_id,
     })

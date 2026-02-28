@@ -41,7 +41,8 @@ export default function NouveauDossier() {
         prefecture: form.prefecture,
         sous_prefecture: form.sous_prefecture,
         village: form.village,
-        numero_cf: form.departement
+        departement: form.departement,
+        numero_cf: form.numero_demande
       })
       setSaved(true)
       setTimeout(() => navigate('/dossiers'), 2000)

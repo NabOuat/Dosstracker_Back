@@ -11,6 +11,7 @@ class DossierBase(BaseModel):
     prefecture: Optional[str] = None
     sous_prefecture: Optional[str] = None
     village: Optional[str] = None
+    departement: Optional[str] = None
     numero_cf: Optional[str] = None
     proprietaire_id: UUID4
 
@@ -22,6 +23,7 @@ class DossierUpdate(BaseModel):
     prefecture: Optional[str] = None
     sous_prefecture: Optional[str] = None
     village: Optional[str] = None
+    departement: Optional[str] = None
     numero_cf: Optional[str] = None
     
     # SERVICE SPFEI (Admin)
