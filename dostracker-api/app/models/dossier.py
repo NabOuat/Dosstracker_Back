@@ -68,6 +68,7 @@ class DossierSCVAA(BaseModel):
     decision_conformite: Conformite
     motifs_inconformite: Optional[List[str]] = None
     autre_motif: Optional[str] = None
+    envoi_sms: Optional[bool] = False
 
 class DossierSPFEITitre(BaseModel):
     conservation: str

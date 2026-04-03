@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
-import { Send, Check } from 'lucide-react'
+import { CheckCircle, Send, Save, ChevronLeft } from 'lucide-react'
 import { getDossiers, updateSpfeiAdmin, envoyerDossier } from '../api/dossiers'
 import DossierCard from '../components/DossierCard'
 import DossierDetail from '../components/DossierDetail'
+import ServiceDashboardSection from '../components/ServiceDashboardSection'
 import Button from '../components/ui/Button'
 import Input from '../components/ui/Input'
 import Alert from '../components/ui/Alert'
+import { motion, AnimatePresence } from 'framer-motion'
 
 const INIT = {
   nationalite: '', genre: '', type_cf: '',
@@ -99,17 +101,21 @@ export default function SpfeiAdmin() {
   return (
     <div className="w-full min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
+      <ServiceDashboardSection />
       <span className="section-label">Service SPFEI</span>
       <h1 className="font-display font-bold text-2xl sm:text-3xl lg:text-4xl text-neutral-900 mb-2">
         Contrôle <span style={{ color: 'var(--ci-orange)' }}>administratif</span>
       </h1>
       <p className="text-sm text-neutral-500 mb-6">
-        Complétez les informations administratives puis transmettez au SERVICE SCVAA.
+        {user?.service_tag === 'Bob' 
+          ? '📊 Mode consultation - Accès aux statistiques uniquement'
+          : 'Complétez les informations administratives puis transmettez au SERVICE SCVAA.'
+        }
       </p>
 
       {success && <Alert variant="success" className="mb-4">{success}</Alert>}
 
-      {active && (
+      {active && user?.service_tag !== 'Bob' && (
         <div className="bg-white rounded-lg p-6 mb-6" style={{ boxShadow: 'var(--shadow-md)', borderLeft: '4px solid var(--ci-orange)' }}>
           <h2 className="font-display font-bold text-base text-neutral-800 mb-1">Traitement : {active.numero_dossier}</h2>
           <p className="text-sm text-neutral-500 mb-5">{active.demandeur}</p>

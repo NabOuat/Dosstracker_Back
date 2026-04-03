@@ -134,6 +134,61 @@ body {
   to   { transform: rotate(360deg); }
 }
 
+/* ─── Animation : orbes de fond par service ─── */
+@keyframes bgOrbA {
+  0%   { transform: translate(-50%,-50%) scale(1.00) translate(  0px,  0px); }
+  25%  { transform: translate(-50%,-50%) scale(1.08) translate( 40px,-30px); }
+  50%  { transform: translate(-50%,-50%) scale(1.04) translate(-20px, 45px); }
+  75%  { transform: translate(-50%,-50%) scale(1.10) translate( 25px, 20px); }
+  100% { transform: translate(-50%,-50%) scale(1.00) translate(  0px,  0px); }
+}
+@keyframes bgOrbB {
+  0%   { transform: translate(-50%,-50%) scale(1.00) translate(  0px,  0px); }
+  33%  { transform: translate(-50%,-50%) scale(0.92) translate(-35px, 25px); }
+  66%  { transform: translate(-50%,-50%) scale(1.06) translate( 30px,-40px); }
+  100% { transform: translate(-50%,-50%) scale(1.00) translate(  0px,  0px); }
+}
+@keyframes bgOrbC {
+  0%   { transform: translate(-50%,-50%) scale(1.00) translate(  0px, 0px); }
+  40%  { transform: translate(-50%,-50%) scale(1.12) translate(-25px,35px); }
+  80%  { transform: translate(-50%,-50%) scale(0.94) translate( 20px,-20px); }
+  100% { transform: translate(-50%,-50%) scale(1.00) translate(  0px, 0px); }
+}
+
+/* ─── Animation : avatar ring ─── */
+@keyframes avatarRingPulse {
+  0%   { transform: scale(1);    opacity: 0.55; }
+  50%  { transform: scale(1.35); opacity: 0.12; }
+  100% { transform: scale(1.60); opacity: 0;    }
+}
+@keyframes avatarGlow {
+  0%, 100% { box-shadow: 0 0 0 0px var(--avatar-glow); }
+  50%       { box-shadow: 0 0 0 5px transparent; }
+}
+
+/* ─── Animation : particules de fond par service ─── */
+@keyframes bgEnvFloat {
+  0%   { opacity: 0; transform: translate(0, 0) rotate(-10deg); }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(80px, -150px) rotate(15deg); }
+}
+@keyframes bgRingExpand {
+  0%   { opacity: 0; transform: scale(0.1); }
+  30%  { opacity: 1; }
+  100% { opacity: 0; transform: scale(3); }
+}
+@keyframes bgHexFloat {
+  0%   { opacity: 0; transform: translateY(0) rotate(0deg); }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-600px) rotate(30deg); }
+}
+@keyframes bgStarTwinkle {
+  0%, 100% { opacity: 0; transform: scale(0.2) rotate(0deg); }
+  50%       { opacity: 1; transform: scale(1) rotate(36deg); }
+}
+
 /* ===== COMPOSANTS ===== */
 @layer components {
 
@@ -471,7 +526,7 @@ body {
 .page {
   width: 100%;
   min-height: 100vh;
-  background: var(--n-50);
+  background: transparent;
   overflow-x: hidden;
 }
 .page-inner {

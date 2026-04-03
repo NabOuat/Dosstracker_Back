@@ -5,6 +5,7 @@ import { LogOut, X } from 'lucide-react'
 import Logo from './ui/Logo'
 import { useAuth } from '../context/AuthContext'
 import { getServiceActions } from '../utils/serviceRoutes'
+import UserAvatar from './UserAvatar'
 
 const SIDEBAR_W = 256
 
@@ -13,11 +14,11 @@ const COMMON_NAV = [
   { to: '/parametres',label: 'Paramètres',       icon: 'Settings' }
 ]
 
-const AVATAR_STYLE = {
-  orange: { background: 'linear-gradient(135deg, var(--ci-orange), var(--ci-orange-dark))' },
-  green:  { background: 'linear-gradient(135deg, var(--ci-green), var(--ci-green-dark))'   },
-  blue:   { background: 'linear-gradient(135deg, #3B82F6, #1D4ED8)'                        },
-  purple: { background: 'linear-gradient(135deg, #8B5CF6, #6D28D9)'                        },
+const AVATAR_GLOW = {
+  orange: 'rgba(244,121,32,0.55)',
+  green:  'rgba(0,133,63,0.55)',
+  blue:   'rgba(59,130,246,0.55)',
+  purple: 'rgba(139,92,246,0.55)',
 }
 
 export default function Sidebar({ open, onClose }) {
@@ -55,7 +56,8 @@ export default function Sidebar({ open, onClose }) {
     navigate('/login', { replace: true })
   }
 
-  const avatarStyle  = AVATAR_STYLE[user?.color] ?? AVATAR_STYLE.orange
+  const color     = user?.color ?? 'orange'
+  const glowColor = AVATAR_GLOW[color] ?? AVATAR_GLOW.orange
 
   return (
     <>
@@ -135,15 +137,26 @@ export default function Sidebar({ open, onClose }) {
         >
           {user && (
             <div className="flex items-center gap-3 mb-3 px-1">
-              <div
-                className="w-9 h-9 rounded-full flex items-center justify-center text-white text-[0.72rem] font-bold shrink-0"
-                style={avatarStyle}
-              >
-                {user.initials}
+              {/* Avatar animé */}
+              <div className="relative shrink-0" style={{ width: 44, height: 44 }}>
+                {/* Anneau pulsant */}
+                <span
+                  style={{
+                    position: 'absolute', inset: -4,
+                    borderRadius: '50%',
+                    border: `2px solid ${glowColor}`,
+                    animation: 'avatarRingPulse 2.6s ease-out infinite',
+                    zIndex: 0,
+                  }}
+                />
+                {/* Personnage SVG */}
+                <div style={{ position: 'relative', zIndex: 1, animation: 'avatarGlow 2.6s ease-in-out infinite', '--avatar-glow': glowColor, borderRadius: '50%' }}>
+                  <UserAvatar serviceId={user.service_id} size={44} />
+                </div>
               </div>
               <div className="min-w-0">
                 <p className="text-[0.8rem] font-bold text-white/90 truncate leading-tight">
-                  {user.label}
+                  {user.nom_complet || user.label || user.username}
                 </p>
                 <p className="text-[0.65rem] text-white/35 mt-0.5">Connecté</p>
               </div>

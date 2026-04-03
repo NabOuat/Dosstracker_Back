@@ -211,35 +211,6 @@ export default function Login() {
             </Button>
           </form>
 
-          {/* Aide démo */}
-          <details className="text-center">
-            <summary className="text-[0.7rem] text-neutral-400 cursor-pointer hover:text-neutral-500 transition-colors select-none">
-              Identifiants de démonstration
-            </summary>
-            <div className="mt-3 rounded-md bg-neutral-100 p-3 text-left">
-              <table className="w-full text-[0.7rem] text-neutral-600">
-                <thead>
-                  <tr className="text-neutral-400 font-bold uppercase tracking-wider border-b border-neutral-200">
-                    <th className="pb-1.5 font-bold">Utilisateur</th>
-                    <th className="pb-1.5 font-bold">Mot de passe</th>
-                  </tr>
-                </thead>
-                <tbody className="font-mono divide-y divide-neutral-200">
-                  {[
-                    ['courrier',     'courrier2026'],
-                    ['spfei',        'spfei2026'],
-                    ['scvaa',        'scvaa2026'],
-                    ['conservation', 'conserv2026'],
-                  ].map(([u, p]) => (
-                    <tr key={u}>
-                      <td className="py-1 pr-3 text-neutral-700">{u}</td>
-                      <td className="py-1 text-neutral-800">{p}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </details>
         </div>
       </div>
     </div>

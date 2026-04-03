@@ -11,6 +11,7 @@ import Courrier          from './pages/Courrier'
 import SpfeiAdmin        from './pages/SpfeiAdmin'
 import Scvaa             from './pages/Scvaa'
 import SpfeiTitre        from './pages/SpfeiTitre'
+import DemandesAPFR      from './pages/DemandesAPFR'
 import SmsLog            from './pages/SmsLog'
 import SmsTest           from './pages/SmsTest'
 import Dossiers          from './pages/Dossiers'
@@ -38,6 +39,7 @@ export default function App() {
               <Route path="/courrier/envoyer" element={<Courrier mode="envoyer" />} />
               <Route path="/spfei/admin" element={<SpfeiAdmin />} />
               <Route path="/spfei/titre" element={<SpfeiTitre />} />
+              <Route path="/spfei/apfr"  element={<DemandesAPFR />} />
               <Route path="/scvaa"       element={<Scvaa />}      />
               <Route path="/sms"         element={<SmsLog />}     />
               <Route path="/sms-test"    element={<SmsTest />}    />

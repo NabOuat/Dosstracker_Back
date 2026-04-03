@@ -1,0 +1,91 @@
+version: '3.8'
+
+services:
+  # Backend API
+  backend:
+    build:
+      context: ./dostracker-api
+      dockerfile: Dockerfile
+    container_name: dostracker-api
+    ports:
+      - "8000:8000"
+    environment:
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_KEY=${SUPABASE_KEY}
+      - SUPABASE_SERVICE_KEY=${SUPABASE_SERVICE_KEY}
+      - SECRET_KEY=${SECRET_KEY}
+      - SENTRY_DSN=${SENTRY_DSN}
+      - ENVIRONMENT=development
+      - ALLOWED_ORIGINS=http://localhost:5173,http://localhost:3000
+    volumes:
+      - ./dostracker-api:/app
+      - ./dostracker-api/uploads:/app/uploads
+      - ./dostracker-api/logs:/app/logs
+    depends_on:
+      - redis
+    networks:
+      - dostracker-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+
+  # Frontend
+  frontend:
+    build:
+      context: ./dostracker-app
+      dockerfile: Dockerfile
+    container_name: dostracker-app
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:8000/api/v1
+    volumes:
+      - ./dostracker-app:/app
+      - /app/node_modules
+    networks:
+      - dostracker-network
+    depends_on:
+      - backend
+
+  # Redis pour le caching
+  redis:
+    image: redis:7-alpine
+    container_name: dostracker-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - dostracker-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # PostgreSQL (optionnel - si vous ne utilisez pas Supabase)
+  # postgres:
+  #   image: postgres:15-alpine
+  #   container_name: dostracker-postgres
+  #   environment:
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_PASSWORD: postgres
+  #     POSTGRES_DB: dostracker
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - postgres-data:/var/lib/postgresql/data
+  #     - ./bd.sql:/docker-entrypoint-initdb.d/init.sql
+  #   networks:
+  #     - dostracker-network
+
+volumes:
+  redis-data:
+  # postgres-data:
+
+networks:
+  dostracker-network:
+    driver: bridge

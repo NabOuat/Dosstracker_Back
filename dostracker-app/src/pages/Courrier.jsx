@@ -9,10 +9,12 @@ import {
 } from '../api/dossiers'
 import DossierCard from '../components/DossierCard'
 import DossierDetail from '../components/DossierDetail'
+import ServiceDashboardSection from '../components/ServiceDashboardSection'
 import Button from '../components/ui/Button'
 import Input from '../components/ui/Input'
 import Alert from '../components/ui/Alert'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useAuth } from '../context/AuthContext'
 
 const INIT = {
   numero: '', date_enregistrement: new Date().toISOString().slice(0, 10),
@@ -21,6 +23,7 @@ const INIT = {
 }
 
 export default function Courrier({ mode = 'creer' }) {
+  const { user } = useAuth()
   const [dossiers, setDossiers] = useState([])
   const [showForm, setShowForm] = useState(false)
   const [form, setForm] = useState(INIT)
@@ -34,6 +37,7 @@ export default function Courrier({ mode = 'creer' }) {
   const [showDemandeForm, setShowDemandeForm] = useState(false)
   const [demandeForm, setDemandeForm] = useState({ dossier_id: null, motif: '' })
   const [demandeSending, setDemandeSending] = useState(false)
+  const [showDashboard, setShowDashboard] = useState(false)
 
   const load = () => getDossiers('COURRIER').then(d => {
     setDossiers(Array.isArray(d) ? d : [])
@@ -135,6 +139,9 @@ export default function Courrier({ mode = 'creer' }) {
     >
       <div className="page-inner">
 
+        {/* ─── Tableau de bord du service (pour service_tag='Bob') ─── */}
+        <ServiceDashboardSection />
+
         {/* ─── En-tête ─── */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-7">
           <div>
@@ -145,8 +152,11 @@ export default function Courrier({ mode = 'creer' }) {
                 : <>Enregistrement des <span style={{ color: 'var(--ci-orange)' }}>dossiers</span></>
               }
             </h1>
+            {user?.service_tag === 'Bob' && (
+              <p className="text-xs text-neutral-500 mt-2">📊 Mode consultation - Accès aux statistiques uniquement</p>
+            )}
           </div>
-          {mode === 'creer' && !showForm && (
+          {mode === 'creer' && !showForm && user?.service_tag !== 'Bob' && (
             <Button variant="primary" onClick={() => { setShowForm(true); setError('') }}>
               <Plus size={15} /> Nouveau dossier
             </Button>

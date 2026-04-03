@@ -3,6 +3,7 @@ from typing import List, Any, Optional
 from datetime import datetime, timezone, date
 from pydantic import BaseModel
 import os
+import logging
 
 from app.core.deps import get_current_active_user, get_courrier_user, get_spfei_user, get_scvaa_user
 from app.database import get_supabase
@@ -12,6 +13,8 @@ from app.models.dossier import (
 )
 from app.models.enums import StatutDossier
 from app.services.sms_service import sms_service
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/dossiers", tags=["Dossiers"])
 
@@ -322,7 +325,7 @@ async def update_scvaa(
         "details": {"decision": dossier_in.decision_conformite, "motifs": dossier_in.motifs_inconformite},
     }).execute()
 
-    if nouveau_statut == "NON_CONFORME":
+    if nouveau_statut == "NON_CONFORME" and dossier_in.envoi_sms:
         dossier_info = supabase.table("v_dossiers").select("*").eq("id", dossier_id).execute()
         if dossier_info.data:
             d = dossier_info.data[0]
@@ -349,7 +352,7 @@ async def update_scvaa(
                 sms_result = {"success": False, "error": "Numéro de contact invalide ou identique au numéro Twilio"}
             
             # Enregistrer le SMS dans la base de données avec le statut réel
-            sms_status = "ENVOYE" if sms_result.get("success") else "ERREUR"
+            sms_status = "ENVOYE" if sms_result.get("success") else "SIMULE"
             sms_log_data = {
                 "dossier_id": dossier_id,
                 "type_sms": "NON_CONFORMITE",
@@ -359,13 +362,20 @@ async def update_scvaa(
                 "envoye_par_id": current_user["id"],
             }
             
+            # Ajouter proprietaire_id si disponible
+            if d.get("proprietaire_id"):
+                sms_log_data["proprietaire_id"] = d.get("proprietaire_id")
+            
             # Ajouter les détails Twilio si disponibles
             if sms_result.get("message_sid"):
-                sms_log_data["message_sid"] = sms_result.get("message_sid")
+                sms_log_data["twilio_sid"] = sms_result.get("message_sid")
             if sms_result.get("error"):
-                sms_log_data["erreur_details"] = sms_result.get("error")
+                sms_log_data["erreur"] = sms_result.get("error")
             
-            supabase.table("sms_log").insert(sms_log_data).execute()
+            try:
+                supabase.table("sms_log").insert(sms_log_data).execute()
+            except Exception as e:
+                logger.error(f"Erreur lors de l'enregistrement du SMS: {str(e)}")
 
     updated = supabase.table("v_dossiers").select("*").eq("id", dossier_id).execute()
     return updated.data[0] if updated.data else response.data[0]
@@ -390,22 +400,19 @@ async def resend_sms(
 
     d = dossier_info.data[0]
     
-    # Récupérer les motifs d'inconformité du dernier SMS
-    sms_log = supabase.table("sms_log").select("*").eq("dossier_id", dossier_id).eq("type_sms", "NON_CONFORMITE").order("created_at", desc=True).limit(1).execute()
-    
     contact_number = d.get("contact_demandeur", "")
     twilio_number = os.getenv("TWILIO_PHONE_NUMBER", "")
     
     if not contact_number or contact_number == twilio_number:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Numéro de contact invalide ou identique au numéro Twilio")
     
-    # Extraire les motifs du message précédent
-    motifs_str = ""
-    if sms_log.data:
-        message = sms_log.data[0].get("contenu_message", "")
-        # Extraire les motifs du message: "Dossier N° XXX : NON CONFORME. Motifs : ..."
-        if "Motifs :" in message:
-            motifs_str = message.split("Motifs :")[1].strip().rstrip(".")
+    # Récupérer les motifs d'inconformité du dossier
+    motifs_list = d.get("motifs_inconformite", [])
+    autre_motif = d.get("autre_motif", "")
+    
+    motifs_str = ", ".join(motifs_list) if motifs_list else ""
+    if autre_motif:
+        motifs_str += f", {autre_motif}" if motifs_str else autre_motif
     
     # Envoyer le SMS via Twilio
     sms_result = sms_service.send_notification_sms(
@@ -418,7 +425,7 @@ async def resend_sms(
     )
     
     # Enregistrer le nouveau SMS dans la base de données
-    sms_status = "ENVOYE" if sms_result.get("success") else "ERREUR"
+    sms_status = "ENVOYE" if sms_result.get("success") else "SIMULE"
     sms_log_data = {
         "dossier_id": dossier_id,
         "type_sms": "NON_CONFORMITE",
@@ -428,12 +435,19 @@ async def resend_sms(
         "envoye_par_id": current_user["id"],
     }
     
-    if sms_result.get("message_sid"):
-        sms_log_data["message_sid"] = sms_result.get("message_sid")
-    if sms_result.get("error"):
-        sms_log_data["erreur_details"] = sms_result.get("error")
+    # Ajouter proprietaire_id si disponible
+    if d.get("proprietaire_id"):
+        sms_log_data["proprietaire_id"] = d.get("proprietaire_id")
     
-    supabase.table("sms_log").insert(sms_log_data).execute()
+    if sms_result.get("message_sid"):
+        sms_log_data["twilio_sid"] = sms_result.get("message_sid")
+    if sms_result.get("error"):
+        sms_log_data["erreur"] = sms_result.get("error")
+    
+    try:
+        supabase.table("sms_log").insert(sms_log_data).execute()
+    except Exception as e:
+        logger.error(f"Erreur lors de l'enregistrement du SMS: {str(e)}")
     
     return {
         "success": sms_result.get("success"),

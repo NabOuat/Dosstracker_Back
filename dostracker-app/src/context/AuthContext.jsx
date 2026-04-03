@@ -6,18 +6,37 @@ const AuthContext = createContext(null)
 const LS_USER  = 'dostracker_user'
 const LS_TOKEN = 'dostracker_access_token'
 
+/** Extrait les initiales depuis un nom complet */
+function getInitials(name) {
+  if (!name) return '?'
+  const parts = name.trim().split(/\s+/).filter(Boolean)
+  if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+  return parts[0].slice(0, 2).toUpperCase()
+}
+
+/** Couleur d'avatar par service_id */
+const SERVICE_COLORS = { 1: 'orange', 2: 'blue', 3: 'green', 4: 'purple' }
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
-    try { 
+    try {
       const storedUser = JSON.parse(localStorage.getItem(LS_USER)) ?? null
       if (storedUser) {
         logger.debug('Utilisateur restauré depuis localStorage', { username: storedUser.username })
+        // Rétro-compatibilité : dériver les champs d'affichage s'ils manquent
+        if (!storedUser.initials || !storedUser.color) {
+          const displayName = storedUser.nom_complet || storedUser.username
+          storedUser.label    = storedUser.label    ?? displayName
+          storedUser.initials = getInitials(displayName)
+          storedUser.color    = SERVICE_COLORS[storedUser.service_id] ?? 'orange'
+          localStorage.setItem(LS_USER, JSON.stringify(storedUser))
+        }
       }
       return storedUser
     }
-    catch (e) { 
+    catch (e) {
       logger.error('Erreur lors de la restauration de l\'utilisateur depuis localStorage', e)
-      return null 
+      return null
     }
   })
 
@@ -28,12 +47,16 @@ export function AuthProvider({ children }) {
       logger.debug('Réponse loginApi reçue', { response })
       
       // La réponse contient directement les données utilisateur et le token
+      const displayName = response.nom_complet || response.username
       const userData = {
         user_id: response.user_id,
         username: response.username,
         nom_complet: response.nom_complet,
         service_id: response.service_id,
-        service: response.service
+        service: response.service,
+        label: displayName,
+        initials: getInitials(displayName),
+        color: SERVICE_COLORS[response.service_id] ?? 'orange',
       }
       
       logger.debug('Données utilisateur extraites', { username: userData.username })

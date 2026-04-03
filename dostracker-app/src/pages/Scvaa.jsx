@@ -3,15 +3,19 @@ import { CheckCircle, XCircle, Send, Save, ChevronLeft, CheckSquare, Square } fr
 import { getDossiers, updateScvaa, resendSms } from '../api/dossiers'
 import DossierCard from '../components/DossierCard'
 import DossierDetail from '../components/DossierDetail'
+import RetourCorrectionModal from '../components/RetourCorrectionModal'
+import ServiceDashboardSection from '../components/ServiceDashboardSection'
 import Button from '../components/ui/Button'
 import Input from '../components/ui/Input'
 import Alert from '../components/ui/Alert'
 import { motion, AnimatePresence } from 'framer-motion'
 import { MOTIFS_INCONFORMITE } from '../utils/mockData'
+import { useAuth } from '../context/AuthContext'
 
 const INIT = { superficie_ha: '', date_bornage: '', geometre_expert: '', contact_geometre: '', decision_conformite: '', motifs_inconformite: [], envoi_sms: false }
 
 export default function Scvaa() {
+  const { user } = useAuth()
   const [dossiers, setDossiers] = useState([])
   const [nonConformeDossiers, setNonConformeDossiers] = useState([])
   const [motifs, setMotifs] = useState([])
@@ -25,6 +29,7 @@ export default function Scvaa() {
   const [error,    setError]    = useState('')
   const [selectedDossiers, setSelectedDossiers] = useState([])
   const [activeTab, setActiveTab] = useState('a-contrler') // 'a-contrler' ou 'non-conformes'
+  const [showRetourCorrectionModal, setShowRetourCorrectionModal] = useState(null)
 
   const load = async () => {
     const scvaaData = await getDossiers('SCVAA')
@@ -89,10 +94,15 @@ export default function Scvaa() {
 
   const handleResendSms = async (dossierId) => {
     setResending(dossierId)
+    setError('')
     try {
-      await resendSms(dossierId)
-      setSuccess('✅ SMS renvoyé avec succès au propriétaire.')
-      setTimeout(() => setSuccess(''), 4000)
+      const response = await resendSms(dossierId)
+      if (response?.success) {
+        setSuccess('✅ SMS renvoyé avec succès au propriétaire.')
+        setTimeout(() => setSuccess(''), 4000)
+      } else {
+        setError(`❌ Échec envoi SMS: ${response?.error || response?.message || 'Erreur inconnue'}`)
+      }
     } catch (err) {
       const errorMsg = err.response?.data?.detail || err.message || 'Erreur inconnue'
       setError(`❌ Erreur: ${errorMsg}`)
@@ -132,18 +142,22 @@ export default function Scvaa() {
       transition={{ duration: 0.3 }}
       className="w-full min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
+      <ServiceDashboardSection />
       <span className="section-label green">Service SCVAA</span>
       <h1 className="font-display font-bold text-2xl sm:text-3xl lg:text-4xl text-neutral-900 mb-2">
         Contrôle <span style={{ color: 'var(--ci-green)' }}>technique</span>
       </h1>
       <p className="text-sm text-neutral-500 mb-6">
-        Vérifiez la conformité cadastrale et topographique de chaque dossier.
+        {user?.service_tag === 'Bob' 
+          ? '📊 Mode consultation - Accès aux statistiques uniquement'
+          : 'Vérifiez la conformité cadastrale et topographique de chaque dossier.'
+        }
       </p>
 
       {success && <Alert variant="success" className="mb-4">{success}</Alert>}
 
       <AnimatePresence>
-        {active && (
+        {active && user?.service_tag !== 'Bob' && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -360,6 +374,13 @@ export default function Scvaa() {
                     >
                       <Send size={14} /> {resending === d.id ? 'Envoi...' : 'Renvoyer SMS'}
                     </Button>
+                    <Button
+                      variant="danger"
+                      size="sm"
+                      onClick={() => setShowRetourCorrectionModal(d)}
+                    >
+                      Retour de Correction
+                    </Button>
                   </div>
                 </div>
               </motion.div>
@@ -379,6 +400,19 @@ export default function Scvaa() {
         )}
       </div>
       <DossierDetail dossier={selected} onClose={() => setSelected(null)} />
+      
+      {showRetourCorrectionModal && (
+        <RetourCorrectionModal
+          dossier={showRetourCorrectionModal}
+          currentUserId={user?.id}
+          onClose={() => setShowRetourCorrectionModal(null)}
+          onSuccess={(msg) => {
+            setSuccess(msg)
+            load()
+            setTimeout(() => setSuccess(''), 4000)
+          }}
+        />
+      )}
       </div>
     </motion.div>
   )
