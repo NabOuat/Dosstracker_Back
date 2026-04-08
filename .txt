@@ -1,0 +1,19 @@
+ajouter une animation de fond qui sera propore a chaque users
+pareil pour des avatar animer
+
+au niveau de chaque services ajouter un type de compte pour voir un apercu de tous les dossiers
+et aussi les activité et performance des utilisateurs de son service
+et aussi les statistiques des dossiers quand users.service_tag === "Bob" 
+
+il y'as une maj a venir pour ajouter des fonctionnaliter supplémentaire au niveau de l'atribution de titre 
+voici les champs : necessiare : -date de transmission; reference du 
+courier du dg ; document pdf chargee  ( ceci remplace les champs actuel)
+
+- au niveau des dossiers non conforme il faut prevoir un bouton "retour de correction" qui permettra de retourner le dossier a de controle technique
+avec une trace de corrdection : 
+
+La personne trnasmetant ; la date de retour coorection ; les elements transmise
+il y'as aussi :  Retour de la conservation;  num tf ; la superficie; ref courier conservation : le pdf joint  ; ( service scva)
+
+et apres ça courier demande de signature apfr : qui concerne plusieurs dossier en meme temps 
+(par le service spfei)

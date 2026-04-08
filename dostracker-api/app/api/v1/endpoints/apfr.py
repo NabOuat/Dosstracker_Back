@@ -2,7 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from typing import List, Optional
 from uuid import UUID
 from datetime import datetime
-from app.core.deps import get_current_user, get_db
+from app.core.deps import get_current_user
+from app.database import get_supabase
 from app.models.apfr import (
     DemandSignatureAPFR,
     DemandSignatureAPFRCreate,
@@ -12,7 +13,6 @@ from app.models.apfr import (
     RetourConservationUpdate
 )
 from app.models.user import User
-from sqlalchemy import text
 
 router = APIRouter(prefix="/apfr", tags=["Signature APFR"])
 
@@ -23,8 +23,7 @@ router = APIRouter(prefix="/apfr", tags=["Signature APFR"])
 @router.post("/demandes", response_model=DemandSignatureAPFR, status_code=status.HTTP_201_CREATED)
 async def creer_demande_signature_apfr(
     demande: DemandSignatureAPFRCreate,
-    current_user: User = Depends(get_current_user),
-    db = Depends(get_db)
+    current_user: User = Depends(get_current_user)
 ):
     """
     Créer une demande de signature APFR groupant plusieurs dossiers.
@@ -156,8 +155,7 @@ async def creer_demande_signature_apfr(
 @router.get("/demandes", response_model=List[DemandSignatureAPFR])
 async def lister_demandes_apfr(
     statut: Optional[str] = None,
-    current_user: User = Depends(get_current_user),
-    db = Depends(get_db)
+    current_user: User = Depends(get_current_user)
 ):
     """
     Récupérer la liste des demandes de signature APFR avec filtrage optionnel par statut.
@@ -212,8 +210,7 @@ async def lister_demandes_apfr(
 @router.get("/demandes/{demande_id}", response_model=DemandSignatureAPFR)
 async def obtenir_demande_apfr(
     demande_id: UUID,
-    current_user: User = Depends(get_current_user),
-    db = Depends(get_db)
+    current_user: User = Depends(get_current_user)
 ):
     """
     Récupérer les détails d'une demande APFR spécifique avec tous ses dossiers.
@@ -268,8 +265,7 @@ async def obtenir_demande_apfr(
 async def mettre_a_jour_demande_apfr(
     demande_id: UUID,
     demande_update: DemandSignatureAPFRUpdate,
-    current_user: User = Depends(get_current_user),
-    db = Depends(get_db)
+    current_user: User = Depends(get_current_user)
 ):
     """
     Mettre à jour le statut d'une demande APFR (EN_ATTENTE → SIGNEE ou REJETEE).
@@ -364,8 +360,7 @@ async def mettre_a_jour_demande_apfr(
 @router.delete("/demandes/{demande_id}", status_code=status.HTTP_200_OK)
 async def supprimer_demande_apfr(
     demande_id: UUID,
-    current_user: User = Depends(get_current_user),
-    db = Depends(get_db)
+    current_user: User = Depends(get_current_user)
 ):
     """
     Supprimer une demande de signature APFR.
@@ -456,8 +451,7 @@ async def supprimer_demande_apfr(
 @router.post("/retour-conservation", response_model=RetourConservation, status_code=status.HTTP_201_CREATED)
 async def creer_retour_conservation(
     retour: RetourConservationCreate,
-    current_user: User = Depends(get_current_user),
-    db = Depends(get_db)
+    current_user: User = Depends(get_current_user)
 ):
     """
     Créer un retour de conservation pour un dossier.
@@ -568,8 +562,7 @@ async def creer_retour_conservation(
 @router.get("/retour-conservation/dossier/{dossier_id}", response_model=RetourConservation)
 async def obtenir_retour_conservation(
     dossier_id: UUID,
-    current_user: User = Depends(get_current_user),
-    db = Depends(get_db)
+    current_user: User = Depends(get_current_user)
 ):
     """
     Récupérer les informations de retour de conservation pour un dossier.

@@ -1,16 +1,15 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from typing import Dict, Any, List
-from sqlalchemy import text
 
-from app.core.deps import get_current_user, get_db
+from app.core.deps import get_current_user
+from app.database import get_supabase
 from app.models.user import User
 
 router = APIRouter(prefix="/service-dashboard", tags=["Service Dashboard"])
 
 @router.get("/overview")
 async def get_service_dashboard_overview(
-    current_user: User = Depends(get_current_user),
-    db = Depends(get_db)
+    current_user: User = Depends(get_current_user)
 ) -> Dict[str, Any]:
     """
     Récupère l'aperçu du tableau de bord pour un service.
@@ -193,8 +192,7 @@ async def get_service_dashboard_overview(
 
 @router.get("/dossiers-par-region")
 async def get_dossiers_par_region(
-    current_user: User = Depends(get_current_user),
-    db = Depends(get_db)
+    current_user: User = Depends(get_current_user)
 ) -> List[Dict[str, Any]]:
     """
     Récupère la répartition des dossiers par région pour le service.
@@ -248,8 +246,7 @@ async def get_dossiers_par_region(
 
 @router.get("/utilisateurs")
 async def get_utilisateurs_service(
-    current_user: User = Depends(get_current_user),
-    db = Depends(get_db)
+    current_user: User = Depends(get_current_user)
 ) -> List[Dict[str, Any]]:
     """
     Récupère la liste détaillée des utilisateurs du service avec leurs statistiques.

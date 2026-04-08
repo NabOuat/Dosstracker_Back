@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cp -r \"c:\\\\Users\\\\OUATTARA AFOR\\\\Desktop\\\\Wok\\\\DosTracker\\\\dostracker-app\" \"c:\\\\Users\\\\OUATTARA AFOR\\\\Desktop\\\\Temp_Front\")",
+      "Bash(rm -rf \"c:\\\\Users\\\\OUATTARA AFOR\\\\Desktop\\\\Temp_Front/node_modules\")",
+      "Bash(rm -rf \"c:\\\\Users\\\\OUATTARA AFOR\\\\Desktop\\\\Temp_Front/dist\")",
+      "Bash(cp \"c:\\\\Users\\\\OUATTARA AFOR\\\\Desktop\\\\Wok\\\\DosTracker\\\\dostracker-app\\\\.env.example\" \"c:\\\\Users\\\\OUATTARA AFOR\\\\Desktop\\\\Temp_Front/\")",
+      "Bash(rm -rf \"c:\\\\Users\\\\OUATTARA AFOR\\\\Desktop\\\\Temp_Back\")",
+      "Bash(rm -rf \"c:\\\\Users\\\\OUATTARA AFOR\\\\Desktop\\\\Temp_Front\")",
+      "Bash(pip install:*)"
+    ]
+  }
+}

@@ -1,0 +1,61 @@
+# Fichier .htaccess pour Interpêche Côte d'Ivoire
+# Configuration des routes et des redirections
+
+# Activer le moteur de réécriture
+RewriteEngine On
+RewriteBase /
+
+# Forcer HTTPS
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Empêcher l'accès aux dossiers sans index
+Options -Indexes
+
+# Rediriger les erreurs 404 vers la page d'accueil
+ErrorDocument 404 /index.php
+
+# Compression GZIP pour améliorer les performances
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css application/javascript application/json
+</IfModule>
+
+# Mise en cache des fichiers statiques
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType image/jpg "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/gif "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType text/css "access plus 1 month"
+  ExpiresByType application/javascript "access plus 1 month"
+  ExpiresByType image/x-icon "access plus 1 year"
+</IfModule>
+
+# Réécriture pour les fichiers et répertoires inexistants
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [QSA,L]
+
+# Routes simplifiées pour les pages principales
+RewriteRule ^accueil/?$ index.php [L]
+RewriteRule ^qui-sommes-nous/?$ pages/qui-sommes-nous.php [L]
+RewriteRule ^activites/?$ pages/activites.php [L]
+RewriteRule ^actualites/?$ pages/actualites.php [L]
+RewriteRule ^galerie/?$ pages/galerie.php [L]
+RewriteRule ^videotheque/?$ pages/videotheque.php [L]
+RewriteRule ^contact/?$ pages/contact.php [L]
+RewriteRule ^organisation/?$ pages/organisation-gouvernance.php [L]
+
+# Protection des fichiers sensibles
+<FilesMatch "(\.htaccess|\.htpasswd|\.env|composer\.json|composer\.lock)$">
+  Order Allow,Deny
+  Deny from all
+</FilesMatch>
+
+# Protection des répertoires sensibles
+<DirectoryMatch "^\.|\.git">
+  Order Allow,Deny
+  Deny from all
+</DirectoryMatch>

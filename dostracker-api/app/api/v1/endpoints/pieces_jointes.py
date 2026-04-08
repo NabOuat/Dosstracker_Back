@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
 from typing import List
 from uuid import UUID
 from datetime import datetime
-from app.core.security import get_current_user
-from app.core.database import get_db
+from app.core.deps import get_current_user
+from app.database import get_supabase
 from app.models.user import User
 from app.models.apfr import PieceJointe
 import os
@@ -22,8 +22,7 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 async def upload_piece_jointe(
     dossier_id: str = Form(...),
     file: UploadFile = File(...),
-    current_user: User = Depends(get_current_user),
-    db = Depends(get_db)
+    current_user: User = Depends(get_current_user)
 ) -> dict:
     """Upload une pièce jointe (PDF/Image) pour un dossier"""
     
@@ -91,8 +90,7 @@ async def upload_piece_jointe(
 @router.get("/dossier/{dossier_id}")
 async def get_pieces_jointes_dossier(
     dossier_id: str,
-    current_user: User = Depends(get_current_user),
-    db = Depends(get_db)
+    current_user: User = Depends(get_current_user)
 ) -> List[dict]:
     """Récupère toutes les pièces jointes d'un dossier"""
     
@@ -124,8 +122,7 @@ async def get_pieces_jointes_dossier(
 @router.delete("/{piece_id}")
 async def delete_piece_jointe(
     piece_id: str,
-    current_user: User = Depends(get_current_user),
-    db = Depends(get_db)
+    current_user: User = Depends(get_current_user)
 ) -> dict:
     """Supprime une pièce jointe"""
     
