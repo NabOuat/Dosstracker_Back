@@ -49,7 +49,7 @@ async def rate_limit_handler(request: Request, exc: RateLimitExceeded):
     )
 
 # Configuration CORS stricte
-ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "http://localhost:5173,http://localhost:3000").split(",")
+ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "http://localhost:5173,http://localhost:3000,https://dostracker.vercel.app,http://dostracker.vercel.app").split(",")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,

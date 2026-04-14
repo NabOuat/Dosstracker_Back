@@ -7,3 +7,7 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: 3.12.8
+      - key: ALLOWED_ORIGINS
+        value: http://localhost:5173,http://localhost:3000,https://dostracker.vercel.app,http://dostracker.vercel.app
+      - key: FRONTEND_URL
+        value: https://dostracker.vercel.app
