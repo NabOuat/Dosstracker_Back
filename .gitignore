@@ -62,3 +62,4 @@ build/
 
 # Docker
 .dockerignore
+dostracker-app/
