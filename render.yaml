@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: dostracker-api
+    runtime: python
+    rootDir: dostracker-api
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.8
+      - key: ALLOWED_ORIGINS
+        value: http://localhost:5173,http://localhost:3000,https://dostracker.vercel.app,http://dostracker.vercel.app
+      - key: FRONTEND_URL
+        value: https://dostracker.vercel.app
