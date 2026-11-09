@@ -22,7 +22,7 @@ class QueryOptimizer:
         
         query = supabase.table("dossiers").select(
             """
-            id, numero_dossier, statut, region, prefecture, sous_prefecture, village,
+            id, numero_dossier, statut, region, sous_prefecture, village,
             numero_cf, superficie, date_bornage, date_levee_plan, date_depot_dossier,
             date_reception_courrier, date_transmission_spfei, date_transmission_scvaa,
             date_transmission_titre, date_attribution_titre, date_envoi_conservation,
@@ -53,7 +53,7 @@ class QueryOptimizer:
         # Requête principale
         dossier_response = supabase.table("dossiers").select(
             """
-            id, numero_dossier, statut, region, prefecture, sous_prefecture, village,
+            id, numero_dossier, statut, region, sous_prefecture, village,
             numero_cf, superficie, date_bornage, date_levee_plan, date_depot_dossier,
             date_reception_courrier, date_transmission_spfei, date_transmission_scvaa,
             date_transmission_titre, date_attribution_titre, date_envoi_conservation,
@@ -150,7 +150,7 @@ class QueryOptimizer:
         
         response = supabase.table("dossiers").select(
             """
-            id, numero_dossier, statut, region, prefecture, sous_prefecture, village,
+            id, numero_dossier, statut, region, sous_prefecture, village,
             numero_cf, superficie, created_at, updated_at,
             proprietaires(id, nom_complet, telephone, email)
             """

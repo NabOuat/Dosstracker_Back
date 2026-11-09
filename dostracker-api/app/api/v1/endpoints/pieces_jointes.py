@@ -4,17 +4,24 @@ from uuid import UUID
 from datetime import datetime
 from app.core.deps import get_current_user
 from app.database import get_supabase
+from logger import get_logger
 import os
-import aiofiles
+import re
+import uuid
 from pathlib import Path
+from app.database import get_supabase_admin
 
+logger = get_logger()
 router = APIRouter(prefix="/pieces-jointes", tags=["Pièces Jointes"])
 
-UPLOAD_DIR = "uploads/pieces_jointes"
+BUCKET = os.getenv("SUPABASE_STORAGE_BUCKET", "pieces-jointes")
+SIGNED_URL_TTL = 300  # secondes
+CONTENT_TYPES = {
+    '.pdf': 'application/pdf', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg',
+    '.png': 'image/png', '.gif': 'image/gif', '.bmp': 'image/bmp',
+}
 ALLOWED_EXTENSIONS = {'.pdf', '.jpg', '.jpeg', '.png', '.gif', '.bmp'}
 MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 MB
-
-os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 
 @router.post("/upload")
@@ -46,12 +53,17 @@ async def upload_piece_jointe(
 
     type_fichier = 'PDF' if file_ext == '.pdf' else 'IMAGE'
 
+    # Chemin sûr : pas de nom client brut (évite path traversal / caractères invalides)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    filename = f"{dossier_id}_{timestamp}_{file.filename}"
-    filepath = os.path.join(UPLOAD_DIR, filename)
+    safe_name = re.sub(r"[^A-Za-z0-9._-]", "_", Path(file.filename).name)
+    filepath = f"{dossier_id}/{timestamp}_{uuid.uuid4().hex[:8]}_{safe_name}"
 
-    async with aiofiles.open(filepath, 'wb') as f:
-        await f.write(contents)
+    try:
+        get_supabase_admin().storage.from_(BUCKET).upload(
+            filepath, contents, {"content-type": CONTENT_TYPES[file_ext]}
+        )
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=f"Erreur stockage fichier: {e}")
 
     result = supabase.table("pieces_jointes").insert({
         "dossier_id": str(dossier_uuid),
@@ -111,6 +123,38 @@ async def get_pieces_jointes_dossier(
     ]
 
 
+@router.get("/{piece_id}/download")
+async def download_piece_jointe(
+    piece_id: str,
+    current_user: dict = Depends(get_current_user)
+) -> dict:
+    """Retourne une URL signée (valide 5 min) pour télécharger la pièce jointe"""
+
+    try:
+        piece_uuid = UUID(piece_id)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="ID pièce jointe invalide")
+
+    piece_res = get_supabase().table("pieces_jointes").select(
+        "url_stockage,nom_original"
+    ).eq("id", str(piece_uuid)).execute()
+    if not piece_res.data:
+        raise HTTPException(status_code=404, detail="Pièce jointe non trouvée")
+
+    piece = piece_res.data[0]
+    try:
+        signed = get_supabase_admin().storage.from_(BUCKET).create_signed_url(
+            piece["url_stockage"], SIGNED_URL_TTL, {"download": piece["nom_original"]}
+        )
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=f"Erreur génération du lien: {e}")
+
+    url = signed.get("signedURL") or signed.get("signedUrl")
+    if not url:
+        raise HTTPException(status_code=404, detail="Fichier introuvable dans le stockage")
+    return {"url": url, "nom_original": piece["nom_original"], "expires_in": SIGNED_URL_TTL}
+
+
 @router.delete("/{piece_id}")
 async def delete_piece_jointe(
     piece_id: str,
@@ -130,11 +174,9 @@ async def delete_piece_jointe(
         raise HTTPException(status_code=404, detail="Pièce jointe non trouvée")
 
     try:
-        filepath = piece_res.data[0]["url_stockage"]
-        if os.path.exists(filepath):
-            os.remove(filepath)
+        get_supabase_admin().storage.from_(BUCKET).remove([piece_res.data[0]["url_stockage"]])
     except Exception as e:
-        print(f"Erreur lors de la suppression du fichier: {e}")
+        logger.warning(f"Erreur suppression fichier storage: {e}")
 
     supabase.table("pieces_jointes").delete().eq("id", str(piece_uuid)).execute()
 

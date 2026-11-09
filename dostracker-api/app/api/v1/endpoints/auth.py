@@ -1,4 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
+from pydantic import BaseModel, EmailStr, Field
+from jose import jwt, JWTError
+from datetime import datetime
 from fastapi.security import OAuth2PasswordRequestForm
 from datetime import timedelta
 from typing import Any
@@ -8,9 +11,10 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
 from logger import get_logger
 
-from app.core.security import verify_password, create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES
+from app.core.security import SECRET_KEY, ALGORITHM, get_password_hash, verify_password, create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES
 from app.database import get_supabase
 from app.models.user import Token, UserLogin
+from app.services.email_service import email_service
 
 logger = get_logger()
 
@@ -133,3 +137,83 @@ async def refresh_token(current_token: Token) -> Any:
         "service_id": current_token.service_id,
         "service": current_token.service
     }
+
+
+# ---------------------------------------------------------------------------
+# Réinitialisation de mot de passe (token JWT stateless, usage unique)
+# ---------------------------------------------------------------------------
+RESET_TOKEN_MINUTES = 30
+
+
+class ForgotPasswordIn(BaseModel):
+    email: EmailStr
+
+
+class TokenIn(BaseModel):
+    token: str
+
+
+class ResetPasswordIn(BaseModel):
+    token: str
+    new_password: str = Field(min_length=8, max_length=72)
+
+
+def _create_reset_token(user: dict) -> str:
+    # "pwd" = empreinte du hash actuel : le token devient invalide dès que le mot de passe change
+    return jwt.encode(
+        {
+            "sub": str(user["id"]),
+            "type": "reset",
+            "pwd": user["hashed_password"][-12:],
+            "exp": datetime.utcnow() + timedelta(minutes=RESET_TOKEN_MINUTES),
+        },
+        SECRET_KEY,
+        algorithm=ALGORITHM,
+    )
+
+
+def _user_from_reset_token(token: str) -> dict:
+    invalid = HTTPException(status_code=400, detail="Lien invalide ou expiré.")
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    except JWTError:
+        raise invalid
+    if payload.get("type") != "reset":
+        raise invalid
+    res = get_supabase().table("users").select("id, username, hashed_password").eq("id", payload["sub"]).execute()
+    if not res.data or res.data[0]["hashed_password"][-12:] != payload.get("pwd"):
+        raise invalid
+    return res.data[0]
+
+
+@router.post("/forgot-password")
+async def forgot_password(data: ForgotPasswordIn, background: BackgroundTasks) -> dict:
+    """Envoie un lien de réinitialisation. Réponse identique que l'email existe ou non (anti-énumération)."""
+    res = get_supabase().table("users").select("id, username, nom_complet, email, hashed_password").eq("email", data.email).execute()
+    if res.data:
+        user = res.data[0]
+        front = os.getenv("FRONTEND_URL", "http://localhost:5173").rstrip("/")
+        link = f"{front}/reset-password/{_create_reset_token(user)}"
+        html = (
+            f"<p>Bonjour {user.get('nom_complet') or user['username']},</p>"
+            f"<p>Une réinitialisation de votre mot de passe DosTracker a été demandée. "
+            f"Ce lien est valable {RESET_TOKEN_MINUTES} minutes :</p>"
+            f'<p><a href="{link}">Réinitialiser mon mot de passe</a></p>'
+            f"<p>Si vous n'êtes pas à l'origine de cette demande, ignorez ce message.</p>"
+        )
+        background.add_task(email_service.send, user["email"], "DosTracker — Réinitialisation du mot de passe", html, f"Lien : {link}")
+    return {"message": "Si cette adresse est connue, un email de réinitialisation vient d'être envoyé."}
+
+
+@router.post("/validate-reset-token")
+async def validate_reset_token(data: TokenIn) -> dict:
+    user = _user_from_reset_token(data.token)
+    return {"valid": True, "username": user["username"]}
+
+
+@router.post("/reset-password")
+async def reset_password(data: ResetPasswordIn) -> dict:
+    user = _user_from_reset_token(data.token)
+    get_supabase().table("users").update({"hashed_password": get_password_hash(data.new_password)}).eq("id", user["id"]).execute()
+    logger.info(f"Mot de passe réinitialisé pour {user['username']}")
+    return {"message": "Mot de passe réinitialisé avec succès."}

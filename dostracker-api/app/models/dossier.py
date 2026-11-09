@@ -8,7 +8,6 @@ class DossierBase(BaseModel):
     numero_dossier: str
     date_enregistrement: date
     region: str
-    prefecture: Optional[str] = None
     sous_prefecture: Optional[str] = None
     village: Optional[str] = None
     departement: Optional[str] = None
@@ -20,7 +19,6 @@ class DossierCreate(DossierBase):
 
 class DossierUpdate(BaseModel):
     # SERVICE COURRIER
-    prefecture: Optional[str] = None
     sous_prefecture: Optional[str] = None
     village: Optional[str] = None
     departement: Optional[str] = None

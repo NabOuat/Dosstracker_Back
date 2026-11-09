@@ -3,12 +3,54 @@ services:
     name: dostracker-api
     runtime: python
     rootDir: dostracker-api
+    plan: free
+    region: frankfurt
+    healthCheckPath: /health
+    autoDeploy: true
     buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    # 1 seul worker : 2FA / sessions / rate-limit sont en mémoire
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT --workers 1
     envVars:
       - key: PYTHON_VERSION
         value: 3.12.8
+      - key: ENVIRONMENT
+        value: production
+      - key: LOG_LEVEL
+        value: INFO
       - key: ALLOWED_ORIGINS
-        value: http://localhost:5173,http://localhost:3000,https://dostracker.vercel.app,http://dostracker.vercel.app
+        value: http://localhost:5173,https://dostracker.vercel.app
       - key: FRONTEND_URL
         value: https://dostracker.vercel.app
+      - key: SUPABASE_STORAGE_BUCKET
+        value: pieces-jointes
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALGORITHM
+        value: HS256
+      # À renseigner dans le dashboard Render (sync: false = jamais dans git)
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_KEY
+        sync: false
+      - key: TWILIO_ACCOUNT_SID
+        sync: false
+      - key: TWILIO_AUTH_TOKEN
+        sync: false
+      - key: TWILIO_PHONE_NUMBER
+        sync: false
+      - key: TWILIO_VERIFY_SID
+        sync: false
+      - key: SENTRY_DSN
+        sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false
+      - key: SMTP_FROM
+        sync: false

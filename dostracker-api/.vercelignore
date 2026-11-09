@@ -1,0 +1,5 @@
+tests
+logs
+uploads
+__pycache__
+*.sql

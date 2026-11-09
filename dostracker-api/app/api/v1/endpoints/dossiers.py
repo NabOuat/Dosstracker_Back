@@ -26,7 +26,6 @@ class EnvoyerRequest(BaseModel):
 
 class DossierCourrierUpdate(BaseModel):
     region: Optional[str] = None
-    prefecture: Optional[str] = None
     sous_prefecture: Optional[str] = None
     village: Optional[str] = None
     numero_cf: Optional[str] = None
@@ -292,93 +291,95 @@ async def update_scvaa(
     current_user: dict = Depends(get_scvaa_user)
 ) -> Any:
     """Met à jour les informations techniques d'un dossier (SERVICE SCVAA)"""
-    supabase = get_supabase()
+    try:
+        supabase = get_supabase()
 
-    dossier = supabase.table("dossiers").select("*").eq("id", dossier_id).eq("statut", "SCVAA").execute()
-    if not dossier.data:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Dossier non trouvé ou non au statut SCVAA")
+        dossier = supabase.table("dossiers").select("*").eq("id", dossier_id).eq("statut", "SCVAA").execute()
+        if not dossier.data:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Dossier non trouvé ou non au statut SCVAA")
 
-    update_data = dossier_in.model_dump(exclude_none=True)
-    update_data["agent_scvaa_id"] = current_user["id"]
-    update_data["date_decision_scvaa"] = datetime.now(timezone.utc).isoformat()
+        update_data = dossier_in.model_dump(exclude_none=True)
+        # envoi_sms est un flag de requête, pas une colonne de la table dossiers
+        update_data.pop("envoi_sms", None)
+        update_data["agent_scvaa_id"] = current_user["id"]
+        update_data["date_decision_scvaa"] = datetime.now(timezone.utc).isoformat()
 
-    nouveau_statut = "NON_CONFORME" if dossier_in.decision_conformite == "NON_CONFORME" else "SPFEI_TITRE"
-    update_data["statut"] = nouveau_statut
-    
-    # Convertir les dates en chaînes pour la sérialisation JSON
-    for date_field in ['date_bornage']:
-        if date_field in update_data and update_data[date_field]:
-            if isinstance(update_data[date_field], date):
-                update_data[date_field] = update_data[date_field].isoformat()
+        nouveau_statut = "NON_CONFORME" if dossier_in.decision_conformite == "NON_CONFORME" else "SPFEI_TITRE"
+        update_data["statut"] = nouveau_statut
 
-    response = supabase.table("dossiers").update(update_data).eq("id", dossier_id).execute()
-    if not response.data:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Erreur lors de la mise à jour du dossier")
+        # Convertir les dates en chaînes pour la sérialisation JSON
+        for date_field in ['date_bornage']:
+            if date_field in update_data and update_data[date_field]:
+                if isinstance(update_data[date_field], date):
+                    update_data[date_field] = update_data[date_field].isoformat()
 
-    supabase.table("workflow_history").insert({
-        "dossier_id": dossier_id,
-        "user_id": current_user["id"],
-        "service_id": current_user["service_id"],
-        "ancien_statut": "SCVAA",
-        "nouveau_statut": nouveau_statut,
-        "action": f"Décision SCVAA: {dossier_in.decision_conformite}",
-        "details": {"decision": dossier_in.decision_conformite, "motifs": dossier_in.motifs_inconformite},
-    }).execute()
+        response = supabase.table("dossiers").update(update_data).eq("id", dossier_id).execute()
+        if not response.data:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Erreur lors de la mise à jour du dossier")
 
-    if nouveau_statut == "NON_CONFORME" and dossier_in.envoi_sms:
-        dossier_info = supabase.table("v_dossiers").select("*").eq("id", dossier_id).execute()
-        if dossier_info.data:
-            d = dossier_info.data[0]
-            motifs_str = ", ".join(dossier_in.motifs_inconformite) if dossier_in.motifs_inconformite else ""
-            if dossier_in.autre_motif:
-                motifs_str += f", {dossier_in.autre_motif}" if motifs_str else dossier_in.autre_motif
-            
-            # Vérifier que le numéro de contact est valide et différent du numéro Twilio
-            contact_number = d.get("contact_demandeur", "")
-            twilio_number = os.getenv("TWILIO_PHONE_NUMBER", "")
-            
-            if contact_number and contact_number != twilio_number:
-                # Envoyer le SMS via Twilio
-                sms_result = sms_service.send_notification_sms(
-                    to_number=contact_number,
-                    notification_type="non_conforme",
-                    context={
-                        "numero": d["numero_dossier"],
-                        "motifs": motifs_str
-                    }
-                )
-            else:
-                # Si le numéro est invalide ou identique, enregistrer une erreur
-                sms_result = {"success": False, "error": "Numéro de contact invalide ou identique au numéro Twilio"}
-            
-            # Enregistrer le SMS dans la base de données avec le statut réel
-            sms_status = "ENVOYE" if sms_result.get("success") else "SIMULE"
-            sms_log_data = {
-                "dossier_id": dossier_id,
-                "type_sms": "NON_CONFORMITE",
-                "numero_destinataire": contact_number,
-                "contenu_message": f"Dossier N° {d['numero_dossier']} : NON CONFORME. Motifs : {motifs_str}.",
-                "statut": sms_status,
-                "envoye_par_id": current_user["id"],
-            }
-            
-            # Ajouter proprietaire_id si disponible
-            if d.get("proprietaire_id"):
-                sms_log_data["proprietaire_id"] = d.get("proprietaire_id")
-            
-            # Ajouter les détails Twilio si disponibles
-            if sms_result.get("message_sid"):
-                sms_log_data["twilio_sid"] = sms_result.get("message_sid")
-            if sms_result.get("error"):
-                sms_log_data["erreur"] = sms_result.get("error")
-            
-            try:
-                supabase.table("sms_log").insert(sms_log_data).execute()
-            except Exception as e:
-                logger.error(f"Erreur lors de l'enregistrement du SMS: {str(e)}")
+        supabase.table("workflow_history").insert({
+            "dossier_id": dossier_id,
+            "user_id": current_user["id"],
+            "service_id": current_user["service_id"],
+            "ancien_statut": "SCVAA",
+            "nouveau_statut": nouveau_statut,
+            "action": f"Décision SCVAA: {dossier_in.decision_conformite}",
+            "details": {"decision": dossier_in.decision_conformite, "motifs": dossier_in.motifs_inconformite},
+        }).execute()
 
-    updated = supabase.table("v_dossiers").select("*").eq("id", dossier_id).execute()
-    return updated.data[0] if updated.data else response.data[0]
+        if nouveau_statut == "NON_CONFORME" and dossier_in.envoi_sms:
+            dossier_info = supabase.table("v_dossiers").select("*").eq("id", dossier_id).execute()
+            if dossier_info.data:
+                d = dossier_info.data[0]
+                motifs_str = ", ".join(dossier_in.motifs_inconformite) if dossier_in.motifs_inconformite else ""
+                if dossier_in.autre_motif:
+                    motifs_str += f", {dossier_in.autre_motif}" if motifs_str else dossier_in.autre_motif
+
+                contact_number = d.get("contact_demandeur", "")
+                twilio_number = os.getenv("TWILIO_PHONE_NUMBER", "")
+
+                if contact_number and contact_number != twilio_number:
+                    sms_result = sms_service.send_notification_sms(
+                        to_number=contact_number,
+                        notification_type="non_conforme",
+                        context={
+                            "numero": d["numero_dossier"],
+                            "motifs": motifs_str
+                        }
+                    )
+                else:
+                    sms_result = {"success": False, "error": "Numéro de contact invalide ou identique au numéro Twilio"}
+
+                sms_status = "ENVOYE" if sms_result.get("success") else "SIMULE"
+                sms_log_data = {
+                    "dossier_id": dossier_id,
+                    "type_sms": "NON_CONFORMITE",
+                    "numero_destinataire": contact_number,
+                    "contenu_message": f"Dossier N° {d['numero_dossier']} : NON CONFORME. Motifs : {motifs_str}.",
+                    "statut": sms_status,
+                    "envoye_par_id": current_user["id"],
+                }
+
+                if d.get("proprietaire_id"):
+                    sms_log_data["proprietaire_id"] = d.get("proprietaire_id")
+                if sms_result.get("message_sid"):
+                    sms_log_data["twilio_sid"] = sms_result.get("message_sid")
+                if sms_result.get("error"):
+                    sms_log_data["erreur"] = sms_result.get("error")
+
+                try:
+                    supabase.table("sms_log").insert(sms_log_data).execute()
+                except Exception as e:
+                    logger.error(f"Erreur lors de l'enregistrement du SMS: {str(e)}")
+
+        updated = supabase.table("v_dossiers").select("*").eq("id", dossier_id).execute()
+        return updated.data[0] if updated.data else response.data[0]
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Erreur inattendue dans update_scvaa: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Erreur interne: {str(e)}")
 
 
 @router.post("/{dossier_id}/resend-sms")
@@ -513,7 +514,7 @@ async def envoyer_dossier(
 ) -> Any:
     """Envoie un dossier au service suivant dans le workflow"""
     supabase = get_supabase()
-    destination = data.destination
+    destination = data.destination.value  # .value : sinon f-string affiche "StatutDossier.X"
 
     dossier = supabase.table("dossiers").select("*").eq("id", dossier_id).execute()
     if not dossier.data:

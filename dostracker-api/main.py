@@ -48,6 +48,21 @@ async def rate_limit_handler(request: Request, exc: RateLimitExceeded):
         content={"detail": "Trop de requêtes. Veuillez réessayer plus tard."}
     )
 
+@app.exception_handler(Exception)
+async def unhandled_exception_handler(request: Request, exc: Exception):
+    """Garantit que les headers CORS sont présents même sur les erreurs 500 non gérées."""
+    origin = request.headers.get("origin", "")
+    headers = {}
+    if origin in ALLOWED_ORIGINS:
+        headers["Access-Control-Allow-Origin"] = origin
+        headers["Access-Control-Allow-Credentials"] = "true"
+    logger.error(f"Erreur non gérée [{request.method} {request.url.path}]: {str(exc)}", exc_info=True)
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "Erreur interne du serveur"},
+        headers=headers,
+    )
+
 # Configuration CORS stricte
 ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "http://localhost:5173,http://localhost:3000,https://dostracker.vercel.app,http://dostracker.vercel.app").split(",")
 app.add_middleware(
@@ -80,7 +95,7 @@ async def health_check():
     }
 
 # Importer les routers après la création de l'app
-from app.api.v1.endpoints import users, dossiers, proprietaires, auth, sms, debug, auth_enhanced, admin, stats, corrections, apfr, service_dashboard, pieces_jointes
+from app.api.v1.endpoints import users, dossiers, proprietaires, auth, sms, debug, auth_enhanced, admin, stats, corrections, apfr, service_dashboard, pieces_jointes, notifications
 
 # Inclure les routers
 app.include_router(auth.router, prefix="/api/v1", tags=["Authentification"])
@@ -95,6 +110,7 @@ app.include_router(pieces_jointes.router, prefix="/api/v1", tags=["Pièces Joint
 app.include_router(service_dashboard.router, prefix="/api/v1", tags=["Service Dashboard"])
 app.include_router(stats.router, prefix="/api/v1", tags=["Statistiques"])
 app.include_router(admin.router, prefix="/api/v1", tags=["Administration"])
+app.include_router(notifications.router, prefix="/api/v1", tags=["Notifications"])
 app.include_router(debug.router, prefix="/api/v1", tags=["Debug"])
 
 if __name__ == "__main__":
